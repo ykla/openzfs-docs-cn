@@ -14,7 +14,7 @@ ZFS 支持由第三方的 [archzfs 仓库](https://github.com/archzfs/archzfs) �
 
 ## 安装
 
-参见 [Archlinux Wiki](https://wiki.archlinux.org/title/ZFS)。
+参见 [Arch Linux Wiki](https://wiki.archlinux.org/title/ZFS)。
 
 ## 基于 ZFS 的根文件系统
 
