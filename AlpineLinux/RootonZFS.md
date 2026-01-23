@@ -2,15 +2,15 @@
 
 **ZFSBootMenu**
 
-[ZFSBootMenu](https://zfsbootmenu.org/) 是一种不受此类限制的替代引导加载器，并支持启动环境。如果你计划使用 ZBM，请不要遵循本页面上的说明，因为其布局并不兼容。请参考其网站获取安装细节。
+[ZFSBootMenu](https://zfsbootmenu.org/) 是一种不受此类限制的替代引导加载器，还支持启动环境。如果你计划使用 ZFSBootMenu，请勿参照本页面上的说明，因为与其布局并不兼容。请参考其网站获取安装细节。
 
 **自定义**
 
 除非另有说明，否则不建议在重启之前自定义系统配置。
 
-**仅使用经过充分测试的 pool 特性**
+**仅使用经过充分测试的存储池特性**
 
-你应该只使用经过充分测试的 pool 特性。如果数据完整性至关重要，请避免使用新特性。例如，可参见 [此评论](https://github.com/openzfs/openzfs-docs/pull/464#issuecomment-1776918481)。
+你应且只应使用经过充分测试的存储池特性。若数据完整性至关重要，请避免使用新特性。例如，可参见 [此评论](https://github.com/openzfs/openzfs-docs/pull/464#issuecomment-1776918481)。
 
 **仅支持 UEFI**
 
@@ -18,28 +18,28 @@
 
 ## 准备
 
-1. 禁用 Secure Boot。如果启用了 Secure Boot，ZFS 模块将无法加载。
-2. 下载最新版扩展变体的 [Alpine Linux 实时镜像](https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-extended-3.19.0-x86_64.iso)，校验 [校验和](https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-extended-3.19.0-x86_64.iso.asc)，并从该镜像启动。
+1. 禁用安全启动。如果启用了安全启动，将无法加载 ZFS 模块。
+2. 下载最新版扩展变体的 [Alpine Linux 实时镜像](https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-extended-3.19.0-x86_64.iso)，校验 [校验和](https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-extended-3.19.0-x86_64.iso.asc)，然后从该镜像启动。
 
    ```sh
    gpg --auto-key-retrieve --keyserver hkps://keyserver.ubuntu.com --verify alpine-extended-*.asc
 
    dd if=input-file of=output-file bs=1M
    ```
-3. 以 root 用户登录。没有密码。
+3. 以 root 用户登录。密码为空。
 4. 配置网络
 
    ```sh
    setup-interfaces -r
-   # 你必须使用 “-r” 选项才能正确启动网络服务
+   # 你必须使用选项 “-r” 才能正确启动网络服务
    # 示例：
    network interface: wlan0
    WiFi name:         <ssid>
    ip address:        dhcp
-   <enter done to finish network config>
+   <此处按回车完成网络配置>
    manual netconfig:  n
    ```
-5. 如果你使用的是无线网络但未显示，请参阅 [Alpine Linux wiki](https://wiki.alpinelinux.org/wiki/Wi-Fi#wpa_supplicant) 获取更多细节。`wpa_supplicant` 可以在没有互联网连接的情况下通过 `apk add wpa_supplicant` 安装。
+5. 如果你使用的是无线网络但未显示出现，请参阅 [Alpine Linux wiki](https://wiki.alpinelinux.org/wiki/Wi-Fi#wpa_supplicant) 获取更多细节。`wpa_supplicant` 可以在没有互联网连接的情况下通过命令 `apk add wpa_supplicant` 进行安装。
 6. 配置 SSH 服务器
 
    ```sh
@@ -47,18 +47,18 @@
    # 示例：
    ssh server:        openssh
    allow root:        "prohibit-password" 或 "yes"
-   ssh key:           "none" 或 "<public key>"
+   ssh key:           "none" 或 "<公钥>"
    ```
 
    此处设置的配置将被原样复制到已安装的系统中。
 7. 设置 root 密码或 `/root/.ssh/authorized_keys`。
-   请选择一个强度足够的 root 密码，因为它将被复制到已安装的系统中。不过，`authorized_keys` 不会被复制。
-8. 从另一台计算机连接
+   请设置强度足够的 root 密码，因为它将被复制到已安装的系统中。不过，`authorized_keys` 不会被复制。
+8. 从另一台计算机进行连接
 
    ```sh
    ssh root@192.168.1.91
    ```
-9. 配置 NTP 客户端以进行时间同步
+9. 配置 NTP 客户端，用于同步时间
 
    ```sh
    setup-ntp busybox
@@ -76,45 +76,45 @@
     setup-devd udev
     ```
 
-    重启后可通过 `setup-devd mdev && apk del eudev` 将其移除。
+    重启后可通过命令 `setup-devd mdev && apk del eudev` 将其移除。
 12. 目标磁盘
     使用以下命令列出可用磁盘：
 
-    ```
+    ```sh
     find /dev/disk/by-id/
     ```
 
-    如果使用 virtio 作为磁盘总线，请关闭虚拟机并为磁盘设置序列号。对于 QEMU，使用 `-drive format=raw,file=disk2.img,serial=AaBb`。对于 libvirt，请编辑域 XML。示例可参见 [此页面](https://bugzilla.redhat.com/show_bug.cgi?id=1245013)。
+    如果使用 virtio 作为磁盘总线，请关闭虚拟机并为磁盘设置序列号。对于 QEMU，可使用 `-drive format=raw,file=disk2.img,serial=AaBb`。对于 libvirt，请编辑域 XML。示例可参见 [此页面](https://bugzilla.redhat.com/show_bug.cgi?id=1245013)。
 
-    声明磁盘数组：
+    声明磁盘编号：
 
     ```sh
     DISK='/dev/disk/by-id/ata-FOO /dev/disk/by-id/nvme-BAR'
     ```
 
-    对于单磁盘安装，使用：
+    对于单块磁盘安装，使用：
 
     ```sh
     DISK='/dev/disk/by-id/disk1'
     ```
 13. 设置挂载点
 
-    ```sh
+    ```ini
     MNT=$(mktemp -d)
     ```
 14. 设置分区大小：
-    以 GB 为单位设置 swap 大小，如果不希望 swap 占用过多空间，可设置为 1。
+    设置 swap 大小（单位为 GB），如果不希望 swap 占用过多空间，可设置为 1。
 
-    ```sh
+    ```ini
     SWAPSIZE=4
     ```
 
     设置磁盘末尾需要保留的空间大小，最少 1 GB。
 
-    ```sh
+    ```ini
     RESERVE=1
     ```
-15. 从实时介质安装 ZFS 支持：
+15. 通过安装介质安装 ZFS 支持：
 
     ```sh
     apk add zfs
@@ -127,7 +127,9 @@
 ## 系统安装
 
 1. 对磁盘进行分区。
-   注意：你必须清除目标磁盘上所有现有的分区表和数据结构。
+   >**注意**
+   >
+   >你必须清除目标磁盘上所有现有的分区表和数据结构。
    对于基于闪存的存储，可以使用下面的 blkdiscard 命令完成此操作：
 
    ```sh
@@ -163,7 +165,7 @@
    ```sh
    modprobe zfs
    ```
-4. 创建根 pool
+4. 创建根存储池
 
    * 未加密：
 
@@ -199,7 +201,7 @@
    mount -o X-mount.mkdir -t zfs rpool/root "${MNT}"
    mount -o X-mount.mkdir -t zfs rpool/home "${MNT}"/home
    ```
-6. 格式化并挂载 ESP。只有其中一个会被用作 /boot，之后你需要再设置镜像。
+6. 格式化并挂载 ESP。只有其中一个会被用作 `/boot`，之后你需要再设置镜像。
 
    ```sh
    for i in ${DISK}; do
@@ -242,7 +244,7 @@
    "Alpine Linux" "root=ZFS=rpool/root"
    EOF
    ```
-4. 卸载文件系统并创建初始系统快照：
+4. 卸载文件系统，创建初始系统快照：
 
    ```sh
    umount -Rl "${MNT}"
@@ -254,4 +256,4 @@
    ```sh
    reboot
    ```
-6. 挂载其他 EFI 系统分区，然后设置服务以同步其内容。
+6. 挂载其他 EFI 系统分区，然后设置服务来同步其内容。
