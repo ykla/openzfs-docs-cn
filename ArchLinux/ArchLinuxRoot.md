@@ -1,4 +1,4 @@
-# 基于 ZFS 根文件系统的 Arch Linux 
+# 根文件系统基于 ZFS 的 Arch Linux
 
 **ZFSBootMenu**
 
