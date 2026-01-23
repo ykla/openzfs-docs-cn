@@ -1,6 +1,6 @@
 # 目录
 
-* [OpenZFS 文档](README.md)
+* [OpenZFS 中文文档](README.md)
 * [编辑日志](CHANGELOG.md)
 * [目录](mu-lu.md)
 
