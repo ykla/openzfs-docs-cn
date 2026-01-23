@@ -41,7 +41,7 @@
    manual netconfig:  n
    ```
 
-5. 如果你使用的是无线网络但未显示出现，请参阅 [Alpine Linux wiki](https://wiki.alpinelinux.org/wiki/Wi-Fi#wpa_supplicant) 获取更多细节。`wpa_supplicant` 可以在没有互联网连接的情况下通过命令 `apk add wpa_supplicant` 进行安装。
+5. 如果你使用的是无线网络但无线网卡未出现在列表中，请参阅 [Alpine Linux wiki](https://wiki.alpinelinux.org/wiki/Wi-Fi#wpa_supplicant) 获取更多细节。`wpa_supplicant` 可以在没有互联网连接的情况下通过命令 `apk add wpa_supplicant` 进行安装。
 6. 配置 SSH 服务器
 
    ```sh
