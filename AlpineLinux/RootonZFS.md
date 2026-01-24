@@ -1,4 +1,4 @@
-# 根文件系统基于 ZFS 的 Alpine Linux
+# 使用 ZFS 作为根文件系统的 Alpine Linux
 
 **ZFSBootMenu**
 
