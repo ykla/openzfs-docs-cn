@@ -336,7 +336,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    zfs create -o canmount=off -o mountpoint=none bpool/BOOT
    ```
 
-   在 Solaris 系统中，root 文件系统会被克隆，并在通过 `pkg image-update` 或 `beadm` 在进行重大系统变更时递增后缀。Ubuntu 中通过 `zsys` 工具实现了类似功能，不过其数据集布局更为复杂，而且 `zsys` 已处于几乎不再维护的状态。即便没有此类工具，仍可手动创建 rpool/ROOT 和 bpool/BOOT 容器的克隆。尽管如此，为了简化起见，本教程假定 `/boot` 仅使用单一文件系统。
+   在 Solaris 系统中，root 文件系统会被克隆，并在通过 `pkg image-update` 或 `beadm` 进行重大系统变更时递增后缀。Ubuntu 中通过 `zsys` 工具实现了类似功能，不过其数据集布局更为复杂，而且 `zsys` 已处于几乎不再维护的状态。即便没有此类工具，仍可手动创建 rpool/ROOT 和 bpool/BOOT 容器的克隆。尽管如此，为了简化起见，本教程假定 `/boot` 仅使用单一文件系统。
 2. 为 root 和 boot 文件系统创建文件系统数据集：
 
    ```sh
