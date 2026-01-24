@@ -1758,7 +1758,7 @@ df -h | grep ext4test
 >
 >与 BTRFS 快照不同，ZFS 快照是只读的。ZFS 有可写快照的概念，称为克隆（clone），稍后会详细介绍。
 
-创建快照使用 ZFS 命令 `zfs snapshot`，后跟快照名称，遵循格式：`zpool/the/dataset/to/be/snaphotted@快照名称`。快照名称可以是任意字母数字序列，例如 `mysnap`、`20221214` 或 `test123` 都是有效的。唯一需要遵守的规则是使用 `@` 字符作为数据集名称与快照名称的分隔符。
+创建快照使用 ZFS 命令 `zfs snapshot`，后跟快照名称，遵循格式：`zpool/the/dataset/to/be/snapshotted@快照名称`。快照名称可以是任意字母数字序列，例如 `mysnap`、`20221214` 或 `test123` 都是有效的。唯一需要遵守的规则是使用 `@` 字符作为数据集名称与快照名称的分隔符。
 
 >**警告**
 >
