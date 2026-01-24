@@ -18,11 +18,11 @@
 * 强烈建议使用 [64-bit 内核](https://github.com/zfsonlinux/zfs/wiki/FAQ#32-bit-vs-64-bit-systems)。
 * 在逻辑扇区为 4 KiB（“4Kn” 磁盘）的磁盘上安装，仅在 UEFI 启动模式下可行。这并非 ZFS 特有。[GRUB 在 legacy（BIOS）启动模式下无法也不会支持 4K 扇区。](http://savannah.gnu.org/bugs/?46700)
 
-内存小于 2 GiB 的计算机运行 ZFS 时会非常缓慢。在基础工作负载下，建议至少 4 GiB 内存，才能获得正常性能。如果你希望使用去重（deduplication），则需要[大量内存](http://wiki.freebsd.org/ZFSTuningGuide#Deduplication)。启用去重是不可逆的永久性更改，无法轻易恢复。
+内存小于 2 GiB 的计算机运行 ZFS 时会非常缓慢。在基础工作负载下，建议至少 4 GiB 内存，才能获得正常性能。如果你希望使用去重（deduplication），则需要 [大量内存](http://wiki.freebsd.org/ZFSTuningGuide#Deduplication)。启用去重是不可逆的永久性更改，无法轻易恢复。
 
 ### 支持
 
-如果你需要帮助，可以通过 [邮件列表](https://openzfs.github.io/openzfs-docs/Project%20and%20Community/Mailing%20Lists.html#mailing-lists) 或在 [Libera Chat](https://libera.chat/) 上的 IRC 频道 [#zfsonlinux](ircs://irc.libera.chat/#zfsonlinux) 联系社区。如果你有与本教程相关的 Bug 报告或功能请求，请[提交新的 issue 并 @rlaager](https://github.com/openzfs/openzfs-docs/issues/new?body=@rlaager,%20I%20have%20the%20following%20issue%20with%20the%20Debian%20Bullseye%20Root%20on%20ZFS%20教程:)。
+如果你需要帮助，可以通过 [邮件列表](https://openzfs.github.io/openzfs-docs/Project%20and%20Community/Mailing%20Lists.html#mailing-lists) 或在 [Libera Chat](https://libera.chat/) 上的 IRC 频道 [#zfsonlinux](ircs://irc.libera.chat/#zfsonlinux) 联系社区。如果你有与本教程相关的 Bug 报告或功能请求，请 [提交新的 issue 并 @rlaager](https://github.com/openzfs/openzfs-docs/issues/new?body=@rlaager,%20I%20have%20the%20following%20issue%20with%20the%20Debian%20Bullseye%20Root%20on%20ZFS%20教程:)。
 
 ### 贡献
 
@@ -141,7 +141,7 @@ $ sudo -i
 **提示：**
 
 * 使用命令 `ls -la /dev/disk/by-id` 可以列出别名。
-* 你是在虚拟机中操作吗？如果虚拟磁盘在 `/dev/disk/by-id` 中缺失，使用 KVM + virtio 时可用 `/dev/vda`；否则请参考[故障排查](https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Stretch%20Root%20on%20ZFS.html#troubleshooting)部分。
+* 你是在虚拟机中操作吗？如果虚拟磁盘在 `/dev/disk/by-id` 中缺失，使用 KVM + virtio 时可用 `/dev/vda`；否则请参考 [故障排查](https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Stretch%20Root%20on%20ZFS.html#troubleshooting) 部分。
 * 如果你要创建镜像或 raidz 拓扑，请对 pool 中的所有磁盘重复分区命令。
 
 2.3 创建引导存储池：
@@ -620,18 +620,18 @@ Installation finished. No error reported.
       nodev,relatime,x-systemd.requires=zfs-import-bpool.service 0 0 >> /etc/fstab
 
 # zfs set mountpoint=legacy rpool/var/log
-# echo rpool/var/log /var/log zfs nodev,relatime 0 0 >> /etc/fstab
+# echo rpool/var/log /var/log zfs nodev, relatime 0 0 >> /etc/fstab
 
 # zfs set mountpoint=legacy rpool/var/spool
-# echo rpool/var/spool /var/spool zfs nodev,relatime 0 0 >> /etc/fstab
+# echo rpool/var/spool /var/spool zfs nodev, relatime 0 0 >> /etc/fstab
 
 如果创建了 /var/tmp dataset：
 # zfs set mountpoint=legacy rpool/var/tmp
-# echo rpool/var/tmp /var/tmp zfs nodev,relatime 0 0 >> /etc/fstab
+# echo rpool/var/tmp /var/tmp zfs nodev, relatime 0 0 >> /etc/fstab
 
 如果创建了 /tmp dataset：
 # zfs set mountpoint=legacy rpool/tmp
-# echo rpool/tmp /tmp zfs nodev,relatime 0 0 >> /etc/fstab
+# echo rpool/tmp /tmp zfs nodev, relatime 0 0 >> /etc/fstab
 ```
 
 ## 第六步：首次启动
@@ -678,7 +678,7 @@ Installation finished. No error reported.
 6.7 将用户账户添加到默认管理员组：
 
 ```sh
-# usermod -a -G audio,cdrom,dip,floppy,netdev,plugdev,sudo,video 你的用户名
+# usermod -a -G audio, cdrom, dip, floppy, netdev, plugdev, sudo, video 你的用户名
 ```
 
 6.8 镜像 GRUB
@@ -770,8 +770,8 @@ Installation finished. No error reported.
 
 ```sh
 # for file in /etc/logrotate.d/* ; do
-    if grep -Eq "(^|[^#y])compress" "$file" ; then
-        sed -i -r "s/(^|[^#y])(compress)/\1#\2/" "$file"
+    if grep -Eq "(^|[^#y])compress " "$file " ; then
+        sed -i -r "s/(^|[^#y])(compress)/\1#\2/" "$file "
     fi
 done
 ```
@@ -831,7 +831,7 @@ $ sudo cryptsetup luksHeaderBackup /dev/disk/by-id/scsi-SATA_disk1-part4 \
 
 ### 使用 Live CD 进行救援
 
-请参考[第一步：准备安装环境](https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Stretch%20Root%20on%20ZFS.html#step-1-prepare-the-install-environment)。
+请参考 [第一步：准备安装环境](https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Stretch%20Root%20on%20ZFS.html#step-1-prepare-the-install-environment)。
 
 这将自动导入你的存储池。导出并重新导入以修正挂载：
 

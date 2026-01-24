@@ -290,17 +290,17 @@
    tee -a /etc/pacman.d/mirrorlist-archzfs <<- 'EOF'
    ## See https://github.com/archzfs/archzfs/wiki
    ## 法国
-   #,Server = https://archzfs.com/$repo/$arch
+   #,Server = https://archzfs.com/$repo/$ arch
 
    ## 德国
-   #,Server = https://mirror.sum7.eu/archlinux/archzfs/$repo/$arch
-   #,Server = https://mirror.biocrafting.net/archlinux/archzfs/$repo/$arch
+   #,Server = https://mirror.sum7.eu/archlinux/archzfs/$repo/$ arch
+   #,Server = https://mirror.biocrafting.net/archlinux/archzfs/$repo/$ arch
 
    ## 印度
-   #,Server = https://mirror.in.themindsmaze.com/archzfs/$repo/$arch
+   #,Server = https://mirror.in.themindsmaze.com/archzfs/$repo/$ arch
 
    ## 美国
-   #,Server = https://zxcvfdsa.com/archzfs/$repo/$arch
+   #,Server = https://zxcvfdsa.com/archzfs/$repo/$ arch
    EOF
 
    tee -a /etc/pacman.conf <<- 'EOF'

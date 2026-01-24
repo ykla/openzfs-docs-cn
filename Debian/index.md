@@ -2,7 +2,7 @@
 
 ## 安装
 
-如果你想将 ZFS 用作根文件系统，请参阅[基于 ZFS 的根文件系统](https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/index.html#root-on-zfs)。
+如果你想将 ZFS 用作根文件系统，请参阅 [基于 ZFS 的根文件系统](https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/index.html#root-on-zfs)。
 
 在 [contrib 仓库](https://packages.debian.org/source/zfs-linux) 中支持 ZFS。[backports 仓库](https://backports.debian.org/Instructions/) 通常提供了更新版本的 ZFS。你可以按如下方式使用。
 
