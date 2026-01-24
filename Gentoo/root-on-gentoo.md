@@ -2,8 +2,7 @@
 
 - 原文地址：[wiki/ZFS](https://wiki.gentoo.org/wiki/ZFS)，版本 2026 年 1 月 12 日 (星期一) 07:58。
 
-本文重点介绍在 Gentoo 上将 ZFS 用作根文件系统，并设计为配合手册使用。随着时间推移，将会加入更多高级配置，请查看 TODO 部分，以了解是否有可添加内容以改进本文。
-
+本文重点介绍在 Gentoo 上将 ZFS 用作根文件系统，并设计为配合手册使用。随着时间推移，将会加入更多高级配置，请查看 TODO 部分，以了解是否有可添加的内容来改进本文。
 
 #### 分区
 
@@ -21,7 +20,7 @@
 
 ##### 引导
 
-创建 1GB FAT32 文件系统：
+创建 1GB 的 FAT32 文件系统：
 
 ```sh
 mkfs.vfat -F 32 /dev/sda1
@@ -75,7 +74,7 @@ zpool create -f \
 
 >**注意**
 >
->选项 `-o compatibility=grub2` 将确保 GRUB 能正常工作。如果使用 ZFSBootMenu，可以跳过此选项。
+>选项 `-o compatibility=grub2` 可确保 GRUB 能正常工作。如果使用 ZFSBootMenu，可以跳过此选项。
 
 >**警告**
 >
@@ -109,7 +108,7 @@ zpool create -f -o ashift=12 \
 
 ##### 创建 ZFS 文件系统
 
-本指南只创建了 root 和 home 文件系统，但用户可根据需要创建更多文件系统。
+本指南只为 root 和 home 创建了文件系统，但用户可根据需要创建更多文件系统。
 
 ```sh
 zfs create -o mountpoint=none tank/os
@@ -167,7 +166,7 @@ mount -t zfs
 
 成功挂载时的示例输出：
 
-```sh
+```ini
 tank/os/gentoo /mnt/gentoo type zfs (rw,relatime,xattr,posixacl)
 tank/home on /mnt/gentoo/home type zfs (rw,relatime,xattr,posixacl)
 ```
@@ -235,7 +234,7 @@ emerge --ask sys-fs/zfs
 make -j$(nproc) && make modules_install && make install
 ```
 
-每次 gentoo-sources 被更新或内核配置被更改时都必须重复此操作，否则系统将无法启动。
+每次更新 gentoo-sources 或内核配置发生更改时都必须重复此操作，否则系统将无法启动。
 
 #### ZFS 用户空间工具和内核模块
 
@@ -255,17 +254,17 @@ emerge -av sys-fs/zfs
 mkdir -p /etc/dracut.conf.d
 ```
 
-然后，在该目录下创建文件 `zol.conf`，内容如下：
+然后，在该目录下创建文件 `zol.conf`：
 
 ```sh
 nano /etc/dracut.conf.d/zol.conf
 ```
 
-ZFS 的 Dracut 配置文件 **/etc/dracut.conf.d/zol.conf**
+ZFS 的 Dracut 配置文件 **/etc/dracut.conf.d/zol.conf**，内容如下：
 
 ```ini
 nofsck="yes"
-add_dracutmodules+=" zfs "
+add_dracutmodules+="zfs"
 ```
 
 ##### 为发行版内核构建 initramfs
@@ -276,7 +275,7 @@ emerge --config sys-kernel/gentoo-kernel
 
 或者，如果安装了二进制版本，
 
-```
+```sh
 emerge --config sys-kernel/gentoo-kernel-bin
 ```
 
@@ -427,7 +426,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 nano /etc/default/grub
 ```
 
-```sh
+```ini
 GRUB_CMDLINE_LINUX="refresh"
 ```
 
@@ -458,7 +457,7 @@ reboot
 
 #### Gentoo 重启后无法启动
 
-在 grub 条目中按 e 并在 cmdline 添加 "refresh"
+在 grub 条目中按 e 并在 cmdline 添加 `refresh`。
 
 #### 待办事项
 

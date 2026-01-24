@@ -3,7 +3,7 @@
 
 ## 注意事项
 
-* 一种在 ZFS 根文件系统上安装 Fedora Linux 的替代方法是使用非官方脚本 [fedora-on-zfs](https://github.com/gregory-lee-bartholomew/fedora-on-zfs)，该脚本更加自动化，能生成更接近官方 Fedora 配置的安装。fedora-on-zfs 脚本与下文方法的区别在于，它使用 Fedora 官方的 kickstart 文件之一（如 `fedora-disk-minimal.ks`、`fedora-disk-workstation.ks`、`fedora-disk-kde.ks` 等）指导安装，同时进行少量修改来添加 ZFS 功能。如有 bug，请提交至 Greg 的 GitHub 仓库 fedora-on-zfs。
+* 另一种在 Fedora Linux 上安装使用 ZFS 作为根文件系统的方法是使用非官方脚本 [fedora-on-zfs](https://github.com/gregory-lee-bartholomew/fedora-on-zfs)，该脚本更加自动化，能生成更接近官方 Fedora 配置的安装。fedora-on-zfs 脚本与下文方法的区别在于，它使用 Fedora 官方的 kickstart 文件之一（如 `fedora-disk-minimal.ks`、`fedora-disk-workstation.ks`、`fedora-disk-kde.ks` 等）指导安装，同时进行少量修改来增补 ZFS 功能。如有 bug，请提交至 Greg 的 GitHub 仓库 fedora-on-zfs。
 
 **ZFSBootMenu**
 
@@ -78,7 +78,7 @@
     setup-apkrepos
     ```
 
-11. 本指南中，我们使用由 udev 生成的可预测磁盘名称：
+11. 在本指南中，我们使用由 udev 生成的可预测磁盘名称：
 
     ```sh
     apk update
@@ -132,7 +132,7 @@
     RESERVE=1
     ```
 
-15. 从 live 镜像安装 ZFS 支持：
+15. 从 Live 镜像安装 ZFS 支持：
 
     ```ini
     apk add zfs
@@ -147,9 +147,11 @@
 ### 系统安装
 
 1. 分区磁盘
+
    >**注意：**
    >
-   >必须清除目标磁盘上所有现有的分区表和数据结构。
+   >必须清除目标磁盘上全部既有的分区表和数据结构。
+
    对于基于闪存的存储，可以使用如下 `blkdiscard` 命令：
 
    ```bash
@@ -172,7 +174,7 @@
    done
    ```
 
-2. 为本次安装设置临时加密交换分区（仅本次使用）。如果可用内存容量较小，此操作非常有用：
+2. 为本次安装设置临时的加密交换分区（仅本次使用）。如果可用内存容量较小，此操作非常有用：
 
    ```bash
    for i in ${DISK}; do
@@ -242,7 +244,7 @@
 
 ### 系统配置
 
-1. 下载并解压最小 Fedora 根文件系统：
+1. 下载解压 Fedora 最小根文件系统：
 
    ```bash
    apk add curl
@@ -316,7 +318,7 @@
    dnf -y install zfs zfs-dracut
    ```
 
-8. 检查 ZFS 模块是否成功构建：
+8. 检查 ZFS 模块是否构建成功：
 
    ```bash
    tail -n10 /var/lib/dkms/zfs/**/build/make.log
@@ -336,7 +338,7 @@
    dnf remove -y kernel-core
    ```
 
-   ZFS 模块将在内核安装过程中构建。可再次使用 `tail` 查看构建日志。
+   将在内核安装过程中构建 ZFS 模块。可再次使用 `tail` 查看构建日志。
 9. 将 ZFS 模块添加到 dracut：
 
    ```bash
@@ -407,7 +409,7 @@
 17. 设置 root 密码：
 
     ```bash
-    printf 'root:yourpassword' | chpasswd
+    printf 'root:你的密码' | chpasswd
     ```
 
 ### 引导加载程序

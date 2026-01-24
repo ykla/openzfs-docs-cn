@@ -12,9 +12,9 @@
 
 * [64 位 Debian GNU/Linux Trixie Live CD（带 GUI，例如 gnome ISO）](https://cdimage.debian.org/mirror/cdimage/release/current-live/amd64/iso-hybrid/)
 * 强烈建议使用 [64-bit 内核](https://github.com/zfsonlinux/zfs/wiki/FAQ#32-bit-vs-64-bit-systems)。
-* 在逻辑扇区为 4 KiB（“4Kn”磁盘）的磁盘上安装，仅在 UEFI 启动模式下可行。这并非 ZFS 特有。[GRUB 在 legacy（BIOS）启动模式下无法也不会支持 4K 扇区。](http://savannah.gnu.org/bugs/?46700)
+* 在逻辑扇区为 4 KiB（“4Kn”磁盘）的磁盘上安装，仅在 UEFI 启动模式下可行。这并非 ZFS 特有。[在 legacy（BIOS）启动模式下，GRUB 无法支持也不会支持 4K 扇区](http://savannah.gnu.org/bugs/?46700)。
 
-内存小于 2 GiB 的计算机运行 ZFS 时会非常缓慢。在基础工作负载下，建议至少 4 GiB 内存，才能获得正常性能。如果你希望使用去重（deduplication），则需要[大量内存](http://wiki.freebsd.org/ZFSTuningGuide#Deduplication)。启用去重是不可逆的永久性更改，无法轻易恢复。
+在内存小于 2 GiB 的计算机上运行 ZFS 时，性能将严重下降。在基础工作负载下，建议至少 4 GiB 内存，才能获得正常性能。如果你希望使用去重（deduplication）功能，则需要[大量内存](http://wiki.freebsd.org/ZFSTuningGuide#Deduplication)。启用去重是不可逆的永久性更改，无法轻易恢复。
 
 ### 支持
 
@@ -43,17 +43,17 @@
    sensible-browser _build/html/index.html
    ```
 
-5. 使用 `git commit --signoff` 提交到分支，`git push`，并创建 pull request。提及 @rlaager。
+5. 使用 `git commit --signoff` 提交到分支，`git push`，并创建 pull request，@rlaager。
 
 ### 加密
 
-本指南支持三种不同的加密方案：不加密、ZFS 原生加密、以及 LUKS。无论选择何种，都能完整使用所有的 ZFS 特性。
+本指南支持三种不同的加密方案：不加密、ZFS 原生加密、以及 LUKS。无论选择何种，都能完整使用全部的 ZFS 特性。
 
 不加密自然不会对任何内容进行加密。在未加密的情况下，该方案自然具有最佳性能。
 
-ZFS 原生加密会对根池中的数据以及大多数元数据进行加密。它不会加密数据集或快照的名称和属性。完全不会加密启动池，但启动池只有引导加载器、内核和 initrd（除非你在 `/etc/fstab` 中设置了密码，否则 initrd 中通常未包含敏感数据）。系统在控制台输入口令之前无法启动。性能表现良好。由于加密发生在 ZFS 内部，即使使用多块磁盘（mirror 或 raidz 拓扑），数据也只需要加密一次。
+ZFS 原生加密会对根池中的数据以及大多数元数据进行加密。它不会加密数据集或快照的名称和属性。也不会加密启动池，因为启动池只有引导加载器、内核和 initrd（除非你在 `/etc/fstab` 中设置了密码，否则 initrd 中通常未包含敏感数据）。系统在控制台输入口令之前无法启动。性能表现良好。由于加密发生在 ZFS 内部，即使使用多块磁盘（mirror 或 raidz 拓扑），数据也只需要加密一次。
 
-LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加载器、内核和 initrd。系统在控制台输入口令之前无法启动。性能表现良好，但 LUKS 位于 ZFS 的下层，因此如果使用多块磁盘（mirror 或 raidz 拓扑），数据需要在每块磁盘上分别加密一次。
+LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加载器、内核和 initrd。系统在控制台输入口令之前无法启动。性能表现良好，但 LUKS 是 ZFS 的底层，因此如果使用多块磁盘（mirror 或 raidz 拓扑），数据需要在每块磁盘上分别加密一次。
 
 ## 步骤 1：准备安装环境
 
@@ -81,11 +81,14 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    sudo systemctl restart ssh
    ```
 
-   **提示：** 你可以使用 `ip addr show scope global | grep inet` 查找你的 IP 地址。然后在主机上使用 `ssh user@IP` 进行连接。
+>**提示：**
+>
+>你可以使用 `ip addr show scope global | grep inet` 查找你的 IP 地址。然后在主机上使用 `ssh 用户名@IP地址` 进行连接。
+
 4. 禁用自动挂载：
    如果磁盘之前被使用过（在相同偏移处存在分区），在未禁用的情况下，之前的文件系统（例如 ESP）可能会被自动挂载：
 
-   ```
+   ```sh
    gsettings set org.gnome.desktop.media-handling automount false
    ```
 
@@ -96,7 +99,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
 
-6. 在 zfsutils-linux 包中安装缺失的依赖（[Bug 1091428](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1091428)）：
+6. 为 zfsutils-linux 安装缺失的依赖（[Bug 1091428](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1091428)）：
 
    ```sh
    apt install --yes linux-headers-generic
@@ -108,7 +111,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    apt install --yes debootstrap gdisk zfsutils-linux
    ```
 
-## 步骤 2：磁盘格式化
+## 步骤 2：格式化磁盘
 
 1. 使用磁盘名称设置变量：
 
@@ -117,12 +120,13 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    在使用 ZFS 时，应始终使用完整的别名 `/dev/disk/by-id/*`。直接使用设备节点 `/dev/sd*` 可能会导致偶发的导入失败，尤其是在拥有多个存储池的系统上。
+
    **提示：**
 
    * `ls -la /dev/disk/by-id` 可列出这些别名。
    * 你是在虚拟机中进行操作吗？如果你的虚拟磁盘在 `/dev/disk/by-id` 中未被列出，且你在使用 KVM + virtio，可以使用 `/dev/vda`。同时，使用 `/dev/vda` 时，后续使用的分区名称也会有所不同。否则，请阅读“故障排除”章节。
    * 对于 mirror 或 raidz 拓扑，请使用 `DISK1`、`DISK2` 等。
-   * 在选择 boot 存储池大小时，请考虑你将如何使用这些空间。单个内核和 initrd 可能会占用大约 100M。如果你有多个内核并且会创建快照，boot 存储池空间可能会变得紧张，尤其是在需要重新生成 initramfs 镜像时，每个镜像可能约为 85M。请根据你的需求合理规划 boot 存储池的大小。
+   * 在设置 boot 存储池大小时，请考虑你将如何使用这些空间。单个内核和 initrd 可能会占用大约 100M。如果你有多个内核并且会创建快照，boot 存储池空间可能会变得紧张，尤其是在需要重新生成 initramfs 镜像时，每个镜像可能约为 85M。请根据你的需求合理规划 boot 存储池的大小。
 2. 如果你正在复用磁盘，请按需进行清理：
    确保 swap 分区未在使用中：
 
@@ -178,7 +182,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    sgdisk -a1 -n1:24K:+1000K -t1:EF02 $DISK
    ```
 
-   如果使用 UEFI 启动（当前或后续），请运行：
+   如果使用 UEFI 启动（现在或之后），请运行：
 
    ```ini
    sgdisk     -n2:1M:+512M   -t2:EF00 $DISK
@@ -222,11 +226,15 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
        bpool ${DISK}-part3
    ```
 
-   *注意：* GRUB 未支持所有的 ZFS 存储池特性（参见位于 `grub-core/fs/zfs/zfs.c` 的  `spa_feature_names`）。此处单独为 `/boot` 创建一个 ZFS 存储池，并指定了属性 `-o compatibility=grub2`，将该池限制为仅使用 GRUB 支持的特性，从而让 根存储池可使用任意/全部特性。
-   更多信息请参阅 `zpool-features` 手册页中关于“Compatibility feature sets”的章节。
+>*注意：*
+>
+>GRUB 未支持所有的 ZFS 存储池特性（参见位于 `grub-core/fs/zfs/zfs.c` 的  `spa_feature_names`）。此处单独为 `/boot` 创建一个 ZFS 存储池，并指定了属性 `-o compatibility=grub2`，将该池限制为仅使用 GRUB 支持的特性，从而让 根存储池可使用任意/全部特性。
+>
+>更多信息请参阅 `zpool-features` 手册页中关于“Compatibility feature sets”的章节。
+
    **提示：**
 
-   * 如果你要创建 mirror 拓扑，可以使用：
+* 如果你要创建 mirror 拓扑，可以使用：
 
      ```sh
      zpool create \
@@ -236,9 +244,11 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
          /dev/disk/by-id/scsi-SATA_disk2-part3
      ```
 
-   * 对于 raidz 拓扑，请将上述命令中的 `mirror` 替换为 `raidz`、`raidz2` 或 `raidz3`，再列出来自其他磁盘的分区。
-   * 存储池名称是任意的。如果更改了名称，必须在后续步骤中保持一致。`bpool` 这一约定源自本教程。
+* 对于 raidz 拓扑，请将上述命令中的 `mirror` 替换为 `raidz`、`raidz2` 或 `raidz3`，再列出来自其他磁盘的分区。
+* 存储池名称是任意的。如果更改了名称，必须在后续步骤中保持一致。`bpool` 这一约定源自本教程。
+
 5. 创建根存储池：
+
    在以下方案中选择其一：
 
    * 未加密：
@@ -326,7 +336,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    zfs create -o canmount=off -o mountpoint=none bpool/BOOT
    ```
 
-   在 Solaris 系统中，root 文件系统会被克隆，并在通过 `pkg image-update` 或 `beadm` 进行重大系统变更时递增后缀。Ubuntu 中通过 `zsys` 工具实现了类似功能，不过其数据集布局更为复杂，而且 `zsys` 已处于几乎失去维护的状态。即便没有此类工具，仍可手动创建 rpool/ROOT 和 bpool/BOOT 容器的克隆。尽管如此，为了简化起见，本教程假定 `/boot` 仅使用单一文件系统。
+   在 Solaris 系统中，root 文件系统会被克隆，并在通过 `pkg image-update` 或 `beadm` 进行重大系统变更时递增后缀。Ubuntu 中通过 `zsys` 工具实现了类似功能，不过其数据集布局更为复杂，而且 `zsys` 已处于几乎不再维护的状态。即便没有此类工具，仍可手动创建 rpool/ROOT 和 bpool/BOOT 容器的克隆。尽管如此，为了简化起见，本教程假定 `/boot` 仅使用单一文件系统。
 2. 为 root 和 boot 文件系统创建文件系统数据集：
 
    ```sh
@@ -350,6 +360,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    以下数据集是可选的，取决于你的偏好及使用的软件。
+
    如果你希望将它们分离以排除在快照之外：
 
    ```sh
@@ -414,6 +425,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    >**注意：**
    >
    >如果你将启动所需的目录（例如 `/etc`）分离为单独的数据集，必须将其添加到 `/etc/default/zfs` 中的 `ZFS_INITRD_ADDITIONAL_DATASETS`。设置了 `canmount=off` 的数据集（如上面的 `rpool/usr`）不受此影响。
+
 4. 在 `/run` 挂载 tmpfs：
 
    ```sh
@@ -428,7 +440,8 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    debootstrap trixie /mnt
    ```
 
-   `debootstrap` 命令会使新系统处于未配置状态。作为替代方案，你也可以将一个可用系统的全部内容复制到新的 ZFS root 中。
+   `debootstrap` 命令会使新系统处于未配置状态。作为替代方案，你也可以将既有可用系统的全部内容复制到新的 ZFS root 中。
+
 6. 复制 `zpool.cache`：
 
    ```sh
@@ -439,6 +452,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
 ## 步骤 4：系统配置
 
 1. 配置主机名：
+
    将 `HOSTNAME` 替换为所需的主机名：
 
    ```ini
@@ -455,7 +469,9 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    **提示：** 如果你觉得 `vi` 难以使用，可以使用 `nano`。
+
 2. 配置网络接口：
+
    查找接口名称：
 
    ```sh
@@ -474,7 +490,9 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    如果系统不是 DHCP 客户端，请根据需要自定义此文件。
+
 3. 可选：安装驱动固件和 WiFi 支持
+
    如果你是在笔记本电脑或无线网络是主要网络方式的设备上进行安装，上述步骤可能还不够，因为可能缺少合适的设备固件以及配置无线电的工具。可以安装一些额外的软件包来满足这一需求：
 
    ```sh
@@ -510,6 +528,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    >**注意：**
    >
    >此处使用的是 `--rbind`，而不是 `--bind`。
+
 6. 配置基础系统环境：
 
    ```sh
@@ -537,6 +556,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    >**注意：**
    >
    >请忽略任何类似 `ERROR: Couldn't resolve device` 和 `WARNING: Couldn't determine root device` 的报错提示。[cryptsetup 不支持 ZFS](https://bugs.launchpad.net/ubuntu/+source/cryptsetup/+bug/1612906)。
+
 8. 仅针对 LUKS 安装，配置 `/etc/crypttab`：
 
    ```sh
@@ -547,12 +567,14 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    使用 `initramfs` 是针对 [cryptsetup 不支持 ZFS](https://bugs.launchpad.net/ubuntu/+source/cryptsetup/+bug/1612906) 的一种变通方案。
+
    >**提示：**
    >
    >如果你创建的是 mirror 或 raidz 拓扑，请为 `luks2` 等重复添加 `/etc/crypttab` 条目，并根据每块磁盘进行相应调整。
+
 9. 安装 NTP 服务以同步时间。此步骤针对 Trixie，因为在 bootstrap 过程中不会自动安装该软件包。虽然这一步对 ZFS 不是必须的，但在进行互联网访问时非常有用，因为本地时钟漂移可能导致登录失败：
 
-   ```
+   ```sh
    apt install systemd-timesyncd
    ```
 
@@ -582,13 +604,15 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
 
       * 仅在磁盘提供 4 KiB 逻辑扇区（“4Kn”磁盘）时才需要 `mkdosfs` 中的 `-s 1` ，用于满足 FAT32 的最小簇大小要求（在分区大小为 512 MiB 的情况下）。在提供 512 B 扇区的磁盘上同样可以正常工作。
       * 对于 mirror 或 raidz 拓扑，此步骤只会在第一块磁盘上安装 GRUB，其他磁盘将在后续步骤中处理。
+
 11. 可选：卸载 os-prober：
 
     ```sh
     apt purge --yes os-prober
     ```
 
-    这样可以避免 update-grub 输出错误信息。仅在双启动配置中才需要 os-prober。
+    这样可以避免 update-grub 输出错误信息。仅在双系统配置中才需要 os-prober。
+
 12. 设置 root 密码：
 
     ```sh
@@ -596,6 +620,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
     ```
 
 13. 启用导入 bpool
+
     这可以确保无论是否存在 `/etc/zfs/zpool.cache`、是否在 cachefile 中、或者是否启用 `zfs-import-scan.service`，都会导入 `bpool`。
 
     ```sh
@@ -696,6 +721,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    **注意：** 请忽略任何类似 `ERROR: Couldn't resolve device` 和 `WARNING: Couldn't determine root device` 的报错信息。[cryptsetup 不支持 ZFS](https://bugs.launchpad.net/ubuntu/+source/cryptsetup/+bug/1612906)。
+
 3. 解决 GRUB 缺少 zpool-features 支持的问题：
 
    ```sh
@@ -703,7 +729,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    # 设置：GRUB_CMDLINE_LINUX="root=ZFS=rpool/ROOT/debian"
    ```
 
-4. 可选（但强烈推荐）：让 GRUB 调试更容易：
+4. 可选（但强烈建议）：让 GRUB 调试更容易：
 
    ```sh
    vi /etc/default/grub
@@ -713,6 +739,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    稍后，在系统已经成功重启两次，并且你确认一切工作正常之后，如有需要，可以撤销这些更改。
+
 5. 更新启动配置：
 
    ```sh
@@ -722,7 +749,9 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    >**注意：**
    >
    >请忽略来自 `osprober` 的报错（若有）。
+
 6. 安装引导加载器：
+
    从以下方案中选择其一：
 
    * 对于传统（BIOS）启动，将 GRUB 安装到 MBR：
@@ -732,7 +761,9 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
      ```
 
      请注意，你是将 GRUB 安装到整个磁盘，而不是某个分区。
+
      如果你正在创建 mirror 或 raidz 拓扑，请对池中的每一块磁盘重复执行命令 `grub-install`。
+
    * 对于 UEFI 启动，将 GRUB 安装到 ESP：
 
      ```sh
@@ -744,6 +775,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
      ```
 
 7. 修复文件系统挂载顺序：
+
    我们需要启用 `zfs-mount-generator`。这能让 systemd 识别到各个独立的挂载点，这对于诸如 `/var/log` 和 `/var/tmp` 之类的路径非常重要。相应地，`rsyslog.service` 通过 `local-fs.target` 依赖于 `var-log.mount`，而使用 systemd 的 `PrivateTmp` 特性的服务会自动使用 `After=var-tmp.mount`。
 
    ```sh
@@ -768,6 +800,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    如果它们仍然为空，请停止 zed（如下所示），然后重新启动 zed（如上所示）并再次尝试。
+
    待这些文件中有了数据，就停止 `zed`：
 
    ```sh
@@ -791,6 +824,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    将来，你很可能会在每次升级之前创建快照，并在某个时间点删除旧的快照（包括这个），以节省空间。
+
 2. 从 `chroot` 环境退出，返回到 LiveCD 环境：
 
    ```sh
@@ -813,6 +847,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
 5. 如果即便如此池仍然处于 busy 状态，那么在启动时挂载它将会失败，你需要在 initramfs 提示符下执行 `zpool import -f rpool`，然后再执行 `exit`。
+
 6. 重启：
 
    ```sh
@@ -820,7 +855,9 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    等待新安装的系统正常启动。以 root 身份登录。
+
 7. 创建用户账户：
+
    将 `你的用户名` 替换为你想要使用的用户名：
 
    ```sh
@@ -835,6 +872,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
 8. 镜像 GRUB
+
    如果你安装到了多块磁盘上，请在额外的磁盘上安装 GRUB。
 
    * 对于传统（BIOS）启动：
@@ -844,6 +882,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
      ```
 
      一直按回车，直到进入设备选择界面。使用空格键选定池中所有的磁盘（而不是分区）。
+
    * 对于 UEFI 启动：
 
      ```sh
@@ -877,8 +916,11 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    你可以根据需要调整大小（即 `4G` 部分）。
+
    压缩算法选择 `zle`，因为它是开销最低的算法。由于本指南推荐 `ashift=12`（磁盘上 4 KiB 块），常见的 4 KiB 页面大小情况下，没有压缩算法能减少 I/O。唯一例外是全零页面，ZFS 会自动丢弃；但必须启用某种压缩才能达到这一效果。
+
 2. 配置 swap 设备：
+
    >**注意**：
    >
    >在配置文件中应始终使用长别名 `/dev/zvol`，绝不可使用短别名 `/dev/zdX`。
@@ -889,7 +931,8 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    echo RESUME=none > /etc/initramfs-tools/conf.d/resume
    ```
 
-   `RESUME=none` 用于禁用休眠恢复。因为在运行恢复脚本时尚未导入 zvol，如果不禁用，启动过程会因为等待 swap zvol 而出现约 30 秒的等待时间。
+   `RESUME=none` 用于禁用休眠恢复。因为在运行恢复脚本时尚未导入 zvol，如果不禁用，启动过程会因为等待 swap zvol 而出现约 30 秒的停滞。
+
 3. 启用 swap 设备：
 
    ```sh
@@ -914,7 +957,9 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    >**注意**：
    >
    >默认会勾选“Debian 桌面环境”和“打印服务器”。如果你需要安装服务器，请取消勾选这些选项。
+
 3. 可选：禁用日志压缩：
+
    由于 `/var/log` 已由 ZFS 压缩，logrotate 的压缩会消耗 CPU 和磁盘 I/O，而收益通常不大。如果你对 `/var/log` 进行快照，logrotate 的压缩实际上会浪费空间，因为未压缩的数据仍存在快照中。可以手动编辑 `/etc/logrotate.d` 下的文件注释掉 `compress`，或者使用以下循环（推荐复制粘贴执行）：
 
    ```sh
@@ -958,6 +1003,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
 5. 可选：重新启用图形化启动过程：
+
    如果你喜欢图形化启动界面，可以在现在重新启用。在使用 LUKS 时，界面看起来会更美观。
 
    ```sh
@@ -972,6 +1018,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    >**注意**：
    >
    >如果出现报错 `osprober`，可忽略。
+
 6. 可选：仅针对 LUKS 安装，备份 LUKS 头：
 
    ```sh
@@ -980,6 +1027,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
 
    将备份妥善保存（例如存储在云端）。它受你的 LUKS 密码保护，但你可能想使用额外的加密。
+
    >**提示**：
    >
    >如果你创建了镜像或 raidz 拓扑，请对每个 LUKS 卷（如 `luks2` 等）重复此操作。
