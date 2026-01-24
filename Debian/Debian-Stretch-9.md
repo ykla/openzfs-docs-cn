@@ -37,6 +37,7 @@
    # 将 ~/.local/bin 添加到你的 $PATH，例如把下面这行加入 ~/.bashrc：
    PATH=$HOME/.local/bin:$PATH
    ```
+
 3. 进行你的修改。
 4. 测试：
 
@@ -45,6 +46,7 @@
    make html
    sensible-browser _build/html/index.html
    ```
+
 5. 使用 `git commit --signoff` 提交到分支，`git push`，并创建 pull request。提及 @rlaager。
 
 ### 加密
@@ -522,7 +524,7 @@ WantedBy=zfs-import.target
 
 在出现提示时选择 `Yes`。
 
-## 第五步：安装 GRUB 
+## 第五步：安装 GRUB
 
 5.1 验证 ZFS 引导文件系统是否被识别：
 

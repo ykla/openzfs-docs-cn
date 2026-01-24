@@ -37,6 +37,7 @@
    # 将 ~/.local/bin 添加到你的 $PATH，例如把下面这行加入 ~/.bashrc：
    PATH=$HOME/.local/bin:$PATH
    ```
+
 3. 进行你的修改。
 4. 测试：
 
@@ -45,6 +46,7 @@
    make html
    sensible-browser _build/html/index.html
    ```
+
 5. 使用 `git commit --signoff` 提交到分支，`git push`，并创建 pull request。提及 @rlaager。
 
 ### 加密
@@ -73,6 +75,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```sh
    sudo apt update
    ```
+
 3. 可选：在 Live CD 环境中安装并启动 OpenSSH 服务器：
    如果你有第二台设备，通过 SSH 访问目标系统会更方便：
 
@@ -89,11 +92,13 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
    gsettings set org.gnome.desktop.media-handling automount false
    ```
+
 5. 切换为 root：
 
    ```sh
    sudo -i
    ```
+
 6. 在 Live CD 环境中安装 ZFS：
 
    ```sh
@@ -189,6 +194,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
      ```ini
      sgdisk     -n4:0:0        -t4:BF00 $DISK
      ```
+
    * LUKS：
 
      ```ini
@@ -226,6 +232,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
          /dev/disk/by-id/scsi-SATA_disk1-part3 \
          /dev/disk/by-id/scsi-SATA_disk2-part3
      ```
+
    * 对于 raidz 拓扑，请将上述命令中的 `mirror` 替换为 `raidz`、`raidz2` 或 `raidz3`，再列出来自其他磁盘的分区。
    * 存储池名称是任意的。如果更改了名称，必须在后续步骤中保持一致。`bpool` 这一约定源自本教程。
 5. 创建根存储池：
@@ -244,6 +251,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
          -O canmount=off -O mountpoint=/ -R /mnt \
          rpool ${DISK}-part4
      ```
+
    * ZFS 原生加密：
 
      ```sh
@@ -258,6 +266,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
          -O canmount=off -O mountpoint=/ -R /mnt \
          rpool ${DISK}-part4
      ```
+
    * LUKS：
 
      ```sh
@@ -300,6 +309,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
       /dev/disk/by-id/scsi-SATA_disk1-part4 \
       /dev/disk/by-id/scsi-SATA_disk2-part4
   ```
+
 * 对于 raidz 拓扑，请将上述命令中的 `mirror` 替换为 `raidz`、`raidz2` 或 `raidz3`，并列出来自其他磁盘的分区。
 * 在使用 LUKS 的 mirror 或 raidz 拓扑时，请使用 `/dev/mapper/luks1`、`/dev/mapper/luks2` 等，这些需要通过 `cryptsetup` 创建。
 * 存储池名称是任意的。如果更改了名称，必须在各处保持一致。在能够自动安装到 ZFS 的系统上，根存储池默认命名为 `rpool`。
@@ -415,6 +425,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    mount -t tmpfs tmpfs /mnt/run
    mkdir /mnt/run/lock
    ```
+
 5. 安装最小系统：
 
    ```sh
@@ -473,6 +484,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```sh
    apt install --yes firmware-linux wireless-tools
    ```
+
 4. 配置软件包源：
 
    ```sh
@@ -489,6 +501,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    deb http://deb.debian.org/debian bookworm-updates main contrib non-free-firmware
    deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free-firmware
    ```
+
 5. 将 LiveCD 环境中的虚拟文件系统绑定到新系统，然后 `chroot` 进入：
 
    ```sh
@@ -514,6 +527,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```sh
    dpkg-reconfigure locales tzdata keyboard-configuration console-setup
    ```
+
 7. 在 chroot 环境中为新系统安装 ZFS：
 
    ```sh
@@ -545,6 +559,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```
    apt install systemd-timesyncd
    ```
+
 10. 安装 GRUB
     从以下方案中选择其一：
 
@@ -553,6 +568,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
       ```sh
       apt install --yes grub-pc
       ```
+
     * 为 UEFI 启动安装 GRUB：
 
       ```sh
@@ -582,6 +598,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
     ```sh
     passwd
     ```
+
 13. 启用导入 bpool
     这可以确保无论是否存在 `/etc/zfs/zpool.cache`、是否在 cachefile 中、或者是否启用 `zfs-import-scan.service`，都会导入 `bpool`。
 
@@ -612,8 +629,9 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
     ```
 
    > **注意：**
-   > 
+   >
    > 在某些磁盘配置（例如 NVMe？）下，此服务[可能会失败](https://github.com/openzfs/openzfs-docs/issues/349)，提示找不到 `bpool`。如果发生这种情况，请在 `zpool import` 命令中添加 `-d DISK-part3`（将 `DISK` 替换为正确的设备路径）。
+
 14. 可选（但建议）：将 tmpfs 挂载到 `/tmp`
     如果你在前面选择创建了 `/tmp` 数据集，请跳过此步骤，因为两者是冲突的。或者，可以通过启用 `tmp.mount` 单元将 `/tmp` 放在 tmpfs（内存文件系统）上。
 
@@ -621,6 +639,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
     cp /usr/share/systemd/tmp.mount /etc/systemd/system/
     systemctl enable tmp.mount
     ```
+
 15. 可选：安装 SSH：
 
     ```sh
@@ -629,6 +648,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
     vi /etc/ssh/sshd_config
     # 设置：PermitRootLogin yes
     ```
+
 16. 可选：针对 ZFS 原生加密或 LUKS，配置 Dropbear 实现远程解锁：
 
     ```sh
@@ -673,13 +693,14 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
 
     在出现提示时选择 `Yes`。
 
-## 步骤 5：安装 GRUB 
+## 步骤 5：安装 GRUB
 
 1. 验证是否识别了 ZFS 启动文件系统：
 
    ```sh
    grub-probe /boot
    ```
+
 2. 刷新 initrd 文件：
 
    ```sh
@@ -693,6 +714,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    vi /etc/default/grub
    # 设置：GRUB_CMDLINE_LINUX="root=ZFS=rpool/ROOT/debian"
    ```
+
 4. 可选（但强烈推荐）：让 GRUB 调试更容易：
 
    ```sh
@@ -732,6 +754,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
      不需要在这里指定磁盘。如果你正在创建 mirror
      或 raidz 拓扑，额外的磁盘将在后续步骤中处理。
      ```
+
 7. 修复文件系统挂载顺序：
    我们需要启用 `zfs-mount-generator`。这能让 systemd 识别到各个独立的挂载点，这对于诸如 `/var/log` 和 `/var/tmp` 之类的路径非常重要。相应地，`rsyslog.service` 通过 `local-fs.target` 依赖于 `var-log.mount`，而使用 systemd 的 `PrivateTmp` 特性的服务会自动使用 `After=var-tmp.mount`。
 
@@ -785,6 +808,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```sh
    exit
    ```
+
 3. 在 LiveCD 环境中运行以下命令以卸载所有文件系统：
 
    ```sh
@@ -792,12 +816,14 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
        xargs -i{} umount -lf {}
    zpool export -a
    ```
+
 4. 如果由于 busy 错误导致 export 失败，尝试结束所有可能正在使用它的进程：
 
    ```sh
    grep [p]ool /proc/*/mounts | cut -d/ -f3 | uniq | xargs kill
    zpool export -a
    ```
+
 5. 如果即便如此池仍然处于 busy 状态，那么在启动时挂载它将会失败，你需要在 initramfs 提示符下执行 `zpool import -f rpool`，然后再执行 `exit`。
 6. 重启：
 
@@ -819,6 +845,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    chown -R $username:$username /home/$username
    usermod -a -G audio,cdrom,dip,floppy,netdev,plugdev,sudo,video $username
    ```
+
 8. 镜像 GRUB
    如果你安装到了多块磁盘上，请在额外的磁盘上安装 GRUB。
 
@@ -888,6 +915,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    ```sh
    apt dist-upgrade --yes
    ```
+
 2. 安装常规软件集：
 
    ```sh
@@ -907,6 +935,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
        fi
    done
    ```
+
 4. 重启系统：
 
    ```sh
@@ -922,11 +951,13 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
    sudo zfs destroy bpool/BOOT/debian@install
    sudo zfs destroy rpool/ROOT/debian@install
    ```
+
 3. 可选：禁用 root 密码：
 
    ```sh
    sudo usermod -p '*' root
    ```
+
 4. 可选（强烈建议）：禁用 root SSH 登录：
    如果之前安装了 SSH，请撤销临时修改：
 
@@ -936,6 +967,7 @@ LUKS 会对几乎所有内容进行加密。唯一未加密的数据是引导加
 
    sudo systemctl restart ssh
    ```
+
 5. 可选：重新启用图形化启动过程：
    如果你喜欢图形化启动界面，可以在现在重新启用。在使用 LUKS 时，界面看起来会更美观。
 
