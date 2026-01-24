@@ -36,9 +36,37 @@ Solaris 的首个版本包含了一些在大规模辞职之前就已在开发中
 
 >**注意**
 >
-对 git 仓库的所有更改都会由 [LLNL](https://www.llnl.gov/) 进行回归测试。
+>所有对 git 仓库的进行更改都会由 [LLNL](https://www.llnl.gov/) 进行回归测试。
 
-### USE flags
+### USE 标志
+
+[sys-fs/zfs](https://packages.gentoo.org/packages/sys-fs/zfs) 的 USE 标志
+
+Linux 内核模块及 ZFS 用户空间工具的可选功能：
+
+|USE 标志|说明|
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| [`+dist-kernel-cap`](https://packages.gentoo.org/useflags/+dist-kernel-cap) | 与 USE=dist-kernel 结合时，防止升级到不受支持的内核版本                                                                                               |
+| [`+initramfs`](https://packages.gentoo.org/useflags/+initramfs)             | 在 initramfs 中包含内核模块，并重新安装内核（仅对发行版内核有效）                                                                                             |
+| [`+modules`](https://packages.gentoo.org/useflags/+modules)                 | 编译内核模块                                                                                                                             |
+| [`+rootfs`](https://packages.gentoo.org/useflags/+rootfs)                   | 启用从包含根文件系统的 zpool 启动所需的依赖                                                                                                          |
+| [`+strip`](https://packages.gentoo.org/useflags/+strip)                     | 允许 ebuild 对特定文件执行符号剥离                                                                                                              |
+| [`custom-cflags`](https://packages.gentoo.org/useflags/custom-cflags)       | 使用用户指定的 CFLAGS 编译（不受支持）                                                                                                            |
+| [`debug`](https://packages.gentoo.org/useflags/debug)                       | 启用额外的调试代码路径，如断言和额外输出。如需获得有意义的回溯信息，请参见 [Gentoo Wiki: Backtraces](https://wiki.gentoo.org/wiki/Project:Quality_Assurance/Backtraces) |
+| [`dist-kernel`](https://packages.gentoo.org/useflags/dist-kernel)           | 启用发行版内核升级时的子槽重建                                                                                                                    |
+| [`kernel-builtin`](https://packages.gentoo.org/useflags/kernel-builtin)     | 禁用对 sys-fs/zfs-kmod 的依赖，假设 ZFS 已包含在内核源码树中                                                                                          |
+| [`minimal`](https://packages.gentoo.org/useflags/minimal)                   | 不安装 Python 脚本（如 arcstat、dbufstat 等）并避免依赖 dev-lang/python                                                                           |
+| [`modules-compress`](https://packages.gentoo.org/useflags/modules-compress) | 安装压缩的内核模块（如果内核配置启用模块压缩）                                                                                                            |
+| [`modules-sign`](https://packages.gentoo.org/useflags/modules-sign)         | 对已安装的内核模块进行加密签名（要求内核中 CONFIG_MODULE_SIG=y）                                                                                         |
+| [`nls`](https://packages.gentoo.org/useflags/nls)                           | 添加本地语言支持（使用 gettext - GNU locale 工具）                                                                                               |
+| [`pam`](https://packages.gentoo.org/useflags/pam)                           | 安装 zfs_key PAM 模块，用于自动加载家庭数据集的 ZFS 加密密钥                                                                                            |
+| [`python`](https://packages.gentoo.org/useflags/python)                     | 添加对 Python 语言的可选支持/绑定                                                                                                              |
+| [`selinux`](https://packages.gentoo.org/useflags/selinux)                   | 内部使用 !!仅!!，支持 Security Enhanced Linux，必须由 selinux 配置文件设置，否则会导致破坏                                                                   |
+| [`split-usr`](https://packages.gentoo.org/useflags/split-usr)               | 启用支持将 /bin、/lib*、/sbin 和 /usr/sbin 与 /usr/bin 和 /usr/lib* 分开维护的行为                                                                  |
+| [`test-suite`](https://packages.gentoo.org/useflags/test-suite)             | 安装回归测试套件                                                                                                                           |
+| [`unwind`](https://packages.gentoo.org/useflags/unwind)                     | 添加调用栈展开和函数名解析支持                                                                                                                    |
+| [`verify-sig`](https://packages.gentoo.org/useflags/verify-sig)             | 验证 distfiles 上游签名                                                                                                                  |
+
 
 ### [sys-fs/zfs](https://packages.gentoo.org/packages/sys-fs/zfs) 的 USE flags
 
