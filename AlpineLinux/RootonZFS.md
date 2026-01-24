@@ -1,4 +1,4 @@
-# 使用 ZFS 作为根文件系统的 Alpine Linux
+# 构建以 ZFS 为根文件系统的 Alpine Linux
 
 **ZFSBootMenu**
 
@@ -32,7 +32,7 @@
 
    ```sh
    setup-interfaces -r
-   # 你必须使用选项 “-r” 才能正确启动网络服务
+   # 你必须使用选项“-r”才能正确启动网络服务
    # 示例：
    network interface: wlan0
    WiFi name:         <ssid>

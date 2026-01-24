@@ -1,10 +1,10 @@
-# Alpine Linux 概述
+# 在 Alpine Linux 上启用 ZFS 支持
 
 ## 安装
 
 >**注意**
 >
->这是在既有的 Alpine 系统上安装 ZFS 。要将 ZFS 用作根（`/`）文件系统，请参见下文。
+>这是在既有的 Alpine 系统上安装 ZFS。要将 ZFS 用作根（`/`）文件系统，请参见下文。
 
 1. 安装 ZFS 包：
 
@@ -28,7 +28,7 @@
    rc-update add zfs-import default
    ```
 
-2. 在启动时挂载存储池 ：
+2. 在启动时挂载存储池：
 
    ```sh
    rc-update add zfs-mount default
