@@ -11,6 +11,7 @@
    ```sh
    rpm -e --nodeps zfs-fuse
    ```
+
 2. 添加 ZFS 仓库：
 
    ```sh
@@ -30,6 +31,7 @@
    ```sh
    dnf install -y zfs
    ```
+
 5. 加载内核模块：
 
    ```sh
@@ -55,11 +57,13 @@
    ```sh
    modprobe zfs
    ```
+
 6. 在默认情况下，当检测到存储池时，会自动加载 ZFS 内核模块。若要在开机时始终加载模块：
 
    ```sh
    echo zfs > /etc/modules-load.d/zfs.conf
    ```
+
 7. 在默认情况下，ZFS 可能会因内核软件包更新而被卸载。可通过锁定内核版本，仅允许 ZFS 支持的内核，以防止被卸载：
 
    ```sh

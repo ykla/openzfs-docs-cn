@@ -32,6 +32,7 @@
 
    dd if=input-file of=output-file bs=1M
    ```
+
 3. 使用 root 用户登录，初始无密码。
 4. 配置网络：
 
@@ -45,6 +46,7 @@
    <此处按回车键完成网络配置>
    manual netconfig:  n
    ```
+
 5. 如果使用无线网络且未显示，请参阅 [Alpine Linux wiki](https://wiki.alpinelinux.org/wiki/Wi-Fi#wpa_supplicant) 获取详细信息。
    可使用 `apk add wpa_supplicant` 安装 `wpa_supplicant`，无需网络连接。
 6. 配置 SSH 服务器：
@@ -56,22 +58,26 @@
    allow root:        "prohibit-password" 或 "yes"
    ssh key:           "none" 或 "<公钥>"
    ```
+
 7. 设置 root 密码或 `/root/.ssh/authorized_keys`。
 8. 从另一台计算机连接：
 
    ```sh
    ssh root@192.168.1.91
    ```
+
 9. 配置 NTP 客户端进行时间同步：
 
    ```sh
    setup-ntp busybox
    ```
+
 10. 设置 apk 仓库。会显示可用镜像列表，按空格键继续：
 
     ```sh
     setup-apkrepos
     ```
+
 11. 本指南中，我们使用由 udev 生成的可预测磁盘名称：
 
     ```sh
@@ -79,6 +85,7 @@
     apk add eudev
     setup-devd udev
     ```
+
 12. 目标磁盘
     列出可用磁盘：
 
@@ -105,11 +112,13 @@
     ```ini
     DISK='/dev/disk/by-id/disk1'
     ```
+
 13. 设置挂载点：
 
     ```ini
     MNT=$(mktemp -d)
     ```
+
 14. 设置分区大小：
     设置交换分区大小（GB），如果不希望占用过多空间，可设为 1：
 
@@ -122,11 +131,13 @@
     ```ini
     RESERVE=1
     ```
+
 15. 从 live 镜像安装 ZFS 支持：
 
     ```ini
     apk add zfs
     ```
+
 16. 安装分区工具：
 
     ```sh
@@ -160,6 +171,7 @@
       partition_disk "${i}"
    done
    ```
+
 2. 为本次安装设置临时加密交换分区（仅本次使用）。如果可用内存容量较小，此操作非常有用：
 
    ```bash
@@ -169,11 +181,13 @@
       swapon /dev/mapper/"${i##*/}"-part3
    done
    ```
+
 3. 加载 ZFS 内核模块：
 
    ```bash
    modprobe zfs
    ```
+
 4. 创建根池
 
    * 不使用加密的示例：
@@ -197,6 +211,7 @@
            printf '%s ' "${i}-part2";
           done)
      ```
+
 5. 创建根系统容器：
 
    > ```bash
@@ -211,6 +226,7 @@
    zfs mount rpool/root
    mount -o X-mount.mkdir -t zfs rpool/home "${MNT}"/home
    ```
+
 6. 格式化并挂载 ESP（EFI 系统分区）。只有其中一个会作为 `/boot` 使用，之后需要设置镜像：
 
    ```bash
@@ -253,12 +269,14 @@
    tar x  -C "${MNT}" -af "${rootfs_tar}"
    unlink "${MNT}"/"${rootfs_tar_dir}"
    ```
+
 2. 启用社区仓库：
 
    ```bash
    sed -i '/edge/d' /etc/apk/repositories
    sed -i -E 's/#(.*)community/\1community/' /etc/apk/repositories
    ```
+
 3. 生成 fstab：
 
    ```bash
@@ -268,6 +286,7 @@
    | sed "s|vfat.*rw|vfat rw,x-systemd.idle-timeout=1min,x-systemd.automount,noauto,nofail|" \
    > "${MNT}"/etc/fstab
    ```
+
 4. 切换根环境（chroot）：
 
    ```bash
@@ -275,16 +294,19 @@
    for i in /dev /proc /sys; do mkdir -p "${MNT}"/"${i}"; mount --rbind "${i}" "${MNT}"/"${i}"; done
    chroot "${MNT}" /usr/bin/env DISK="${DISK}" bash
    ```
+
 5. 取消所有 shell 别名（防止干扰安装）：
 
    ```bash
    unalias -a
    ```
+
 6. 安装基础软件包：
 
    ```bash
    dnf -y install @core kernel kernel-devel
    ```
+
 7. 安装 ZFS 软件包：
 
    ```bash
@@ -293,6 +315,7 @@
 
    dnf -y install zfs zfs-dracut
    ```
+
 8. 检查 ZFS 模块是否成功构建：
 
    ```bash
@@ -320,6 +343,7 @@
    echo 'add_dracutmodules+=" zfs "' >> /etc/dracut.conf.d/zfs.conf
    echo 'force_drivers+=" zfs "' >> /etc/dracut.conf.d/zfs.conf
    ```
+
 10. 将其他驱动添加到 dracut：
 
     ```bash
@@ -330,6 +354,7 @@
       echo 'filesystems+=" virtio_blk "' >> /etc/dracut.conf.d/fs.conf
     fi
     ```
+
 11. 构建 initrd：
 
     ```bash
@@ -341,26 +366,31 @@
        dracut --verbose --force --kver "${kernel}";
      fi' sh {} \;
     ```
+
 12. 对于 SELinux，在重启时重新标记文件系统：
 
     ```bash
     fixfiles -F onboot
     ```
+
 13. 启用网络时间同步：
 
     ```bash
     systemctl enable systemd-timesyncd
     ```
+
 14. 生成主机 ID：
 
     ```bash
     zgenhostid -f -o /etc/hostid
     ```
+
 15. 安装本地化语言包，例如英文：
 
     ```bash
     dnf install -y glibc-minimal-langpack glibc-langpack-en
     ```
+
 16. 设置语言、键盘布局、时区和主机名：
 
     ```bash
@@ -373,6 +403,7 @@
     --hostname=testhost \
     --keymap=us || true
     ```
+
 17. 设置 root 密码：
 
     ```bash
@@ -395,6 +426,7 @@
    | xargs -0I{} mv {} /boot/EFI/BOOT/BOOTX64.EFI
    rm -rf refind.zip refind-bin-0.14.0.2
    ```
+
 2. 添加启动项：
 
    ```bash
@@ -402,22 +434,26 @@
    "Fedora" "root=ZFS=rpool/root"
    EOF
    ```
+
 3. 退出 chroot 环境：
 
    ```bash
    exit
    ```
+
 4. 卸载文件系统并创建初始系统快照。之后可以根据此快照创建启动环境。参见 [ZFS 根文件系统维护页面](https://openzfs.github.io/openzfs-docs/Getting%20Started/zfs_root_maintenance.html)：
 
    ```bash
    umount -Rl "${MNT}"
    zfs snapshot -r rpool@initial-installation
    ```
+
 5. 导出所有池：
 
    ```bash
    zpool export -a
    ```
+
 6. 重启系统：
 
    ```bash
@@ -432,5 +468,6 @@
    dnf group list --hidden -v       # 查询软件包组
    dnf group install gnome-desktop
    ```
+
 2. 添加新用户并配置交换分区。
 3. 挂载其他 EFI 系统分区，并设置服务以同步其内容。
