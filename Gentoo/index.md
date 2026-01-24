@@ -188,7 +188,7 @@ Cryptographic API --->
 
 >**注意**
 >
-每次升级到新内核时，都必须在 initramfs 目录中为其创建一个对应的文件夹。
+>每次升级到新内核时，都必须在 initramfs 目录中为其创建一个对应的文件夹。
 
 ```sh
 mkdir -vp /usr/src/initramfs/lib/modules/$(uname -r)
@@ -1137,7 +1137,7 @@ root@:~ # kldload opensolaris
 root@:~ # kldload zfs
 ZFS NOTICE: Prefetch is disabled by default if less than 4GB of RAM is present;
 to enable, add "vfs.zfs.prefetch_disable=0" to /boot/loader.conf.
-ZFS文件系统version: 5
+ZFS filesystem version: 5
 ZFS storage pool version: features support (5000)
 root@:~ # kldstat
 Id Refs Address            Size     Name
@@ -1248,7 +1248,7 @@ zpool_test on /zpool_test type zfs (rw,xattr,noacl)
 
 >**提示**
 >
-文件系统类型显示为 `zfs`，说明它是一个文件系统数据集。
+>文件系统类型显示为 `zfs`，说明它是一个文件系统数据集。
 
 查看内容：
 
@@ -1339,11 +1339,11 @@ zfs destroy zpool_test/fds4
 
 >**警告**
 >
-一旦销毁，数据集无法恢复，请确保有多份备份！
+>一旦销毁，数据集无法恢复，请确保有多份备份！
 
 >**提示**
 >
-只有“叶子”数据集可以被销毁。如果数据集有子数据集（如快照或其他文件系统数据集），可以使用递归选项：
+>只有“子”数据集可以被销毁。如果数据集有子数据集（如快照或其他文件系统数据集），可以使用递归选项：
 
 ```bash
 zfs destroy -r zpool_test/fdsX
@@ -1354,8 +1354,6 @@ zfs destroy -r zpool_test/fdsX
 ```bash
 zfs destroy -nv zpool_test/fdsX
 ```
-
-
 
 ### 文件系统数据集属性（Filesystem数据集properties）
 
@@ -1465,7 +1463,7 @@ zpool_test/fds1/fds1_1/fds1_1_1_1  compression  on   inherited from zpool_test/f
 
 >**注意**
 >
-这里出现了两个覆盖。
+>这里出现了两个覆盖。
 
 若要将某个层级及以下的数据集重置为继承属性，可以使用命令：
 
@@ -1535,7 +1533,7 @@ zpool_test/share_test  sharenfs  on        local
 
 >**注意**
 >
-属性 `SOURCE` 显示为 `local`，说明此层级覆盖了默认继承值。
+>属性 `SOURCE` 显示为 `local`，说明此层级覆盖了默认继承值。
 
 在本机上，可以看到 `/etc/exports.d/zfs.exports` 已被添加了内容：
 
@@ -1555,7 +1553,7 @@ Export list for 127.0.0.1:
 
 >**提示**
 >
-可以传递 NFS 选项而不是仅使用 `on`，例如：
+>可以传递 NFS 选项而不是仅使用 `on`，例如：
 
 ```bash
 zfs set sharenfs=ro,no_root_squash zpool_test/share_test
@@ -1582,7 +1580,7 @@ zpool_test/share_test  sharesmb  on        local
 
 >**警告**
 >
-如果执行 `zfs set sharesmb=on` 报错 `SMB share creation failed`，请检查 `/var/lib/samba/usershares` 目录是否存在且权限正确。
+>如果执行 `zfs set sharesmb=on` 报错 `SMB share creation failed`，请检查 `/var/lib/samba/usershares` 目录是否存在且权限正确。
 
 定义共享后，ZFS 会在 `/var/lib/samba/usershares` 下添加一个与数据集同名的文件：
 
@@ -1605,7 +1603,7 @@ sharename=zpool_test_share_test
 
 >**提示**
 >
-可以通过委派（delegation）让普通用户创建并共享数据集，这是更高级的概念，本节不再深入。
+>可以通过委托（delegation）让普通用户创建并共享数据集，这是更高级的概念，本节不再深入。
 
 当然，也可以不使用这些属性，通过手动编辑配置文件来定义 NFS 或 Samba 共享。但使用属性方式更方便，管理起来也更简洁。
 
@@ -1643,7 +1641,7 @@ zpool_test/zvol2                            74.6K  2.17G     74.6K  -
 
 >**注意**
 >
-`USED` 列显示了实际占用空间。
+>`USED` 列显示了实际占用空间。
 
 **重要**
 与文件系统数据集不同，zvol 不能嵌套 zvol，必须创建在文件系统数据集下。
@@ -1758,7 +1756,7 @@ df -h | grep ext4test
 
 >**警告**
 >
-只有文件系统数据集和 zvol 可以创建快照。无法对快照或书签进行快照操作。
+>只有文件系统数据集和 zvol 可以创建快照。无法对快照或书签进行快照操作。
 
 一旦快照创建完成，无需执行其他操作。ZFS 会在幕后透明地管理差异。只要快照未被销毁，所有变更历史都会被保留，无论是新增、删除还是修改数据。一旦快照被销毁，ZFS 会检查数据集的快照时间线，并释放不再被引用的块。
 
@@ -1893,7 +1891,7 @@ zfs diff zpool_test/testfsds1@snap2 zpool_test/testfsds1@snap3 | grep -v '^M' | 
 
 >**提示**
 >
-非连续的快照也可以进行 *diff*。试试：`zfs diff zpool_test/testfsds1@snap1 zpool_test/testfsds1@snap3` 并观察结果。
+>非连续的快照也可以进行 *diff*。试试：`zfs diff zpool_test/testfsds1@snap1 zpool_test/testfsds1@snap3` 并观察结果。
 
 现在，删除 `/zpool_test/testfsds1` 下的所有内容，并观察每个快照大小的变化：
 
@@ -1977,7 +1975,7 @@ zpool_test/testfsds1                               4.50G   432M     4.50G  /zpoo
 
 >**注意**
 >
-如果存在后续快照，ZFS 会要求显式使用 `-r`，就像前面回滚到第一个快照的示例中一样。
+>如果存在后续快照，ZFS 会要求显式使用 `-r`，就像前面回滚到第一个快照的示例中一样。
 
 #### 关于 ZFS 快照的重要注意事项
 
