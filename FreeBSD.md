@@ -2,7 +2,7 @@
 
 ![FreeBSD 中的 ZFS 支持](.gitbook/assets/zof-logo.png)
 
-## FreeBSD 上的安装
+## 在 FreeBSD 中安装 OpenZFS
 
 OpenZFS 已经以预打包形式提供：
 
