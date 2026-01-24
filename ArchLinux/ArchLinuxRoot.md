@@ -1,4 +1,4 @@
-# 使用 ZFS 作为根文件系统的 Arch Linux
+# 以 ZFS 为根文件系统的 Arch Linux
 
 **ZFSBootMenu**
 

@@ -1,4 +1,4 @@
-# 使用 ZFS 作为根文件系统的 Fedora
+# 以 ZFS 为根文件系统的 Fedora
 
 
 ## 注意事项

@@ -1,4 +1,4 @@
-# 使用 ZFS 作为根文件系统的 Debian 9 (Stretch)
+# 以 ZFS 为根文件系统的 Debian 9 (Stretch)
 
 ## 概述
 
