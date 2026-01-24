@@ -9,7 +9,7 @@
 
 ##### 布局
 
-请参考 Handbook 中的[准备磁盘](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Disks "Handbook:AMD64/Installation/Disks")部分，回到创建文件系统的章节。
+请参考 Handbook 中的[准备磁盘](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Disks)部分，回到创建文件系统的章节。
 
 本指南将使用下面的示例，但应足够简单以适应用户的实际需求。
 
@@ -38,7 +38,7 @@ swapon /dev/sda2
 
 >**注意**
 >
->或者，在内存充足的系统上可以使用 zram，但请注意 ZFS 会将数据缓存到 RAM 以提升速度。
+>或者，在内存充足的系统上可以使用 zram，但请注意 ZFS 会将数据缓存到内存来提升速度。
 
 #### ZFS 设置
 
@@ -75,7 +75,7 @@ zpool create -f \
 
 >**注意**
 >
->选项 `-o compatibility=grub2` 确将保 GRUB 能正常工作。如果使用 ZFSBootMenu，可以跳过此选项。
+>选项 `-o compatibility=grub2` 将确保 GRUB 能正常工作。如果使用 ZFSBootMenu，可以跳过此选项。
 
 >**警告**
 >
@@ -87,7 +87,7 @@ zpool create -f \
 >
 >不建议使用原生加密，因为上游目前未维护此功能，详见 [https://github.com/openzfs/zfs/issues/12014](https://github.com/openzfs/zfs/issues/12014) 和 [https://github.com/openzfs/openzfs-docs/issues/494](https://github.com/openzfs/openzfs-docs/issues/494)。请优先使用 LUKS。
 
-创建 zpool 时也可以通过添加额外选项使用原生 ZFS 加密：
+在创建 zpool 时，也可以通过添加额外的选项使用原生 ZFS 加密：
 
 ```sh
 zpool create -f -o ashift=12 \
@@ -105,11 +105,11 @@ zpool create -f -o ashift=12 \
 
 >**注意**
 >
->也可以将 `keylocation` 属性设置为指向某个文件，这在使用 ZFSBootMenu 作为引导加载器时非常有用，或者在启动时希望减少输入密码次数时也可用。[参见 ZFSBootMenu 文档](https://docs.zfsbootmenu.org/en/v2.3.x/general/native-encryption.html) 了解其对加密文件系统的处理方式。
+>也可以将属性 `keylocation` 设置为指向某个文件，这在使用 ZFSBootMenu 作为引导加载器时非常有用，或者在启动时希望减少输入密码次数时也可用。[参见 ZFSBootMenu 文档](https://docs.zfsbootmenu.org/en/v2.3.x/general/native-encryption.html) 了解其对加密文件系统的处理方式。
 
 ##### 创建 ZFS 文件系统
 
-本指南只创建 root 和 home 文件系统，但用户可根据需要创建更多文件系统。
+本指南只创建了 root 和 home 文件系统，但用户可根据需要创建更多文件系统。
 
 ```sh
 zfs create -o mountpoint=none tank/os
@@ -119,7 +119,7 @@ zfs create -o mountpoint=/home tank/home
 
 >**注意**
 >
->具有根挂载点的文件系统应设置属性 `canmount=noauto`。若省略此属性，操作系统可能会尝试自动挂载多个文件系统到 `/` 并失败。如果打算将 `/usr`、`/etc` 或其他系统关键目录放在不同的数据集上，需确保它是根数据集的子数据集（例如 `tank/os/gentoo/usr`），并且 `canmount=on`，这样由 dracut 生成的 initramfs 才能正确挂载。
+>具有根挂载点的文件系统应设置属性 `canmount=noauto`。若省略此属性，操作系统可能会尝试自动挂载多个文件系统到 `/`，然后失败。如果打算将 `/usr`、`/etc` 或其他系统关键目录放在不同的数据集上，需确保它是根数据集的子数据集（例如 `tank/os/gentoo/usr`），并且 `canmount=on`，这样由 dracut 生成的 initramfs 才能被正确挂载。
 
 设置池的首选引导文件系统：
 
@@ -138,8 +138,9 @@ zpool import -N -R /mnt/gentoo tank
 
 然后可以挂载 root 和 home 文件系统。
 
-** 注意**
-如果使用了原生加密，请先加载 ZFS 密钥：
+>**注意**
+>
+>如果使用了原生加密，请先加载 ZFS 密钥：
 
 ```sh
 zfs load-key tank
@@ -195,9 +196,9 @@ cp /etc/hostid /mnt/gentoo/etc
 
 ###### 启用 USE 标志
 
-如果使用发行版内核，则需要启用 `dist-kernel` USE 标志：
+如果使用发行版内核，则需要启用 USE 标志 `dist-kernel`：
 
-文件 **`/etc/portage/make.conf` 在 make.conf 中启用 dist-kernel USE 标志**
+文件 `/etc/portage/make.conf` 在 make.conf 中启用 USE 标志 **dist-kernel**
 
 ```ini
 USE="dist-kernel"
@@ -229,7 +230,7 @@ make -j$(nproc) && make modules_install
 emerge --ask emerge zfs
 ```
 
-然后在 dracut 中添加 zfs 内核模块，如前所述，同时将 `root=ZFS=tank/os/gentoo` 写入 `/etc/cmdline`，否则 initramfs 将无法构建。现在构建并安装，为简便起见使用 installkernel（已启用 dracut 和 grub USE 标志）
+然后在 dracut 中添加 zfs 内核模块，如前所述，同时将 `root=ZFS=tank/os/gentoo` 写入 `/etc/cmdline`，否则 initramfs 将无法构建。现在构建并安装，为简便起见使用 installkernel（已启用 USE 标志 dracut 和 grub）
 
 ```sh
 make -j$(nproc) && make modules_install && make install
@@ -239,7 +240,7 @@ make -j$(nproc) && make modules_install && make install
 
 #### ZFS 用户空间工具和内核模块
 
-包 sys-fs/zfs 是必须的，它允许系统与 ZFS 池交互和管理。确保模块标志已设置：
+包 sys-fs/zfs 是必须的，它能让系统与 ZFS 池交互和管理。确保已设置模块标志：
 
 ```sh
 emerge -av sys-fs/zfs
@@ -261,7 +262,7 @@ mkdir -p /etc/dracut.conf.d
 nano /etc/dracut.conf.d/zol.conf
 ```
 
-文件 **/etc/dracut.conf.d/zol.conf ZFS 的 Dracut 配置**
+ZFS 的 Dracut 配置文件 **/etc/dracut.conf.d/zol.conf** 
 
 ```ini
 nofsck="yes"
@@ -301,7 +302,7 @@ zfs set org.zfsbootmenu:commandline="quiet loglevel=4" tank/os
 
 >**注意**
 >
->[ZFSBootMenu 文档](https://docs.zfsbootmenu.org/en/v2.3.x/guides/general/bootenvs-and-you.html) 指出，内核和 initramfs 必须位于 ZFS 根目录的 /boot 下。然而，systemd 的 installkernel 会尝试定位 EFI 分区的挂载点并将内核-initramfs 对安装到那里，在我们的情况下为 /efi。因此，必须为 <span data-type="inline-memo" data-inline-memo-content="External link for the sys-kernel/installkernel package.">sys-kernel/installkernel</span> 添加 `-systemd` USE 标志以防止这种情况发生。
+>[ZFSBootMenu 文档](https://docs.zfsbootmenu.org/en/v2.3.x/guides/general/bootenvs-and-you.html) 指出，内核和 initramfs 必须位于 ZFS 根目录的 `/boot` 下。然而，systemd 的 installkernel 会尝试定位 EFI 分区的挂载点并将内核-initramfs 对安装到那里，在我们的情况下为 `/efi`。因此，必须为 sys-kernel/installkernel 添加 USE 标志 `-systemd` 以防止出现这种问题。
 
 如果 ESP 之前未挂载，现在需要挂载：
 
@@ -328,9 +329,9 @@ emerge sys-boot/zfsbootmenu
 
 之后，需要调整 ZFSBootMenu 配置以：
 
-* 启用镜像自动管理：ManageImages:true
-* 指向 EFI 挂载点：BootMountPoint: /efi
-* 启用 EFI 二进制生成：EFI 部分 Enabled: true
+* 启用镜像自动管理：`ManageImages:true`
+* 指向 EFI 挂载点：`BootMountPoint: /efi`
+* 启用 EFI 二进制生成：EFI 部分 `Enabled: true`
 
 ZFSBootMenu 配置文件 **/etc/zfsbootmenu/config.yaml**
 
@@ -364,7 +365,7 @@ curl -L https://get.zfsbootmenu.org/efi -o /efi/EFI/BOOT/BOOTX64.EFI
 
 ```sh
 emerge -av sys-boot/efibootmgr
-```sh
+```
 
 然后，如果 ZFSBootMenu 是从源码构建的，可使用以下命令创建 EFI 启动项：
 
@@ -388,7 +389,7 @@ efibootmgr -c -d /dev/sda -p 1 -L "ZFSBootMenu" -l \\EFI\\BOOT\\BOOTX64.EFI
 
 Limine 是现代、先进、可移植、多协议的引导加载器和引导管理器，同时提供 Limine 引导协议的参考实现。
 
-参照 [Limine](https://wiki.gentoo.org/wiki/Limine "Limine") 文章，并确保遵循 [Limine#Using_Limine_With_ZFS_Root](https://wiki.gentoo.org/wiki/Limine#Using_Limine_With_ZFS_Root "Limine") 部分。
+参照 [Limine](https://wiki.gentoo.org/wiki/Limine) 文章，并确保遵循 [Limine#Using_Limine_With_ZFS_Root](https://wiki.gentoo.org/wiki/Limine#Using_Limine_With_ZFS_Root) 部分。
 
 ##### 通用引导加载器（GRUB）
 
