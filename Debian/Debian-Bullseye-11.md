@@ -1,4 +1,4 @@
-# 根文件系统使用 ZFS 的 Debian 11 Bullseye
+# 根文件系统使用 ZFS 的 Debian 11 (Bullseye)
 
 ## 概述
 

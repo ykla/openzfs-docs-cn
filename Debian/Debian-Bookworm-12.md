@@ -1,4 +1,4 @@
-# 根文件系统使用 ZFS 的 Debian 12 Bookworm
+# 根文件系统使用 ZFS 的 Debian 12 (Bookworm)
 
 ## 概述
 
