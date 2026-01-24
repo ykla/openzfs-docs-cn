@@ -3,38 +3,39 @@
 - 原文地址：[ZFS](https://wiki.gentoo.org/wiki/ZFS)，此页面最后编辑于2025年11月6日 (星期四) 20:52。
 
 
-**ZFS** 是一种由 Matthew Ahrens 和 Jeff Bonwick 创建的下一代 [filesystem](https://wiki.gentoo.org/wiki/Filesystem "Filesystem")。它围绕着几个关键理念进行设计：
+**ZFS** 是一种由 Matthew Ahrens 和 Jeff Bonwick 创建的下一代 [文件系统](https://wiki.gentoo.org/wiki/Filesystem)。它围绕着几个核心理念进行设计：
 
-* 存储的管理应当是简单的。
-* 冗余应当由 filesystem 处理。
-* filesystem 在修复时不应被下线。
+* 存储管理应当是简单的。
+* 冗余应当由文件系统处理。
+* 在文件系统进行修复时不应被下线。
 * 在代码发布之前，对最坏情况进行自动化模拟是重要的。
 * 数据完整性至关重要。
 
-ZFS 的开发始于 2001 年的 Sun Microsystems。2005 年，ZFS 作为 OpenSolaris 的一部分在 [CDDL](https://opensource.org/licenses/CDDL-1.0) 许可下发布。2007 年，Pawel Jakub Dawidek 将 ZFS 移植到了 FreeBSD。2008 年，LLNL 的 Brian Behlendorf 启动了 ZFSOnLinux 项目，将 ZFS 移植到 Linux，用于高性能计算。2010 年，Oracle 收购了 Sun Microsystems，并在当年晚些时候终止了 OpenSolaris。
+ZFS 的开发始于 2001 年的 Sun Microsystems。2005 年，作为 OpenSolaris 的一部分，ZFS 在 [CDDL](https://opensource.org/licenses/CDDL-1.0) 许可下发布。2007 年，Pawel Jakub Dawidek 将 ZFS 移植到了 FreeBSD。2008 年，LLNL 的 Brian Behlendorf 启动了 ZFSOnLinux 项目，将 ZFS 移植到 Linux，用于高性能计算。2010 年，Oracle 收购了 Sun Microsystems，并在当年晚些时候终止了 OpenSolaris。
 
-Illumos 项目启动以取代 OpenSolaris，大约 2/3 的 ZFS 核心团队成员辞职，其中包括 Matthew Ahrens 和 Jeff Bonwick。许多人加入了继续开发 OpenZFS 的公司，最初是作为 Illumos 项目的一部分。Oracle 内部未辞职的 1/3 ZFS 核心团队则继续在 Oracle Solaris 中开发一个不兼容的专有 ZFS 分支。
+Illumos 项目启动了，旨在取代 OpenSolaris。大约三分之二的 ZFS 核心团队成员辞职了，其中就有 Matthew Ahrens 和 Jeff Bonwick。许多人加入了后续开发 OpenZFS 的团队，最初是作为 Illumos 项目的一部分。Oracle 内部未辞职的 1/3 ZFS 核心团队则继续在 Oracle Solaris 中开发不兼容的专有 ZFS 分支。
 
-Solaris 的第一个版本包含了一些在大规模辞职之前就已在开发中的创新改动。后续的 Solaris 版本所包含的改动则更少，且雄心不再。如今，一个不断壮大的社区在多个平台上持续开发 OpenZFS，包括 FreeBSD、Illumos、Linux 和 Mac OS X。
+Solaris 的首个版本包含了一些在大规模辞职之前就已在开发中的创新改动。Solaris 的后续版本所包含的改动则更少，且英雄迟暮。如今，一个不断壮大的社区在多个平台上持续开发 OpenZFS，如 FreeBSD、Illumos、Linux 和 Mac OS X。
 
 >**注意**
 >
->Gentoo 的 ZFS 维护者不建议用户在 PORTAGE_TMPDIR 上使用 ZFS（或任何其他较为特殊的 filesystem），因为 Portage 通常会暴露缺陷。但截至 2022 年 5 月，在 ZFS 上使用应当是没有问题的。
-
+>
+>Gentoo 的 ZFS 维护者不建议用户在 PORTAGE_TMPDIR 上使用 ZFS（或任何其他较为特殊的文件系统），因为 Portage 通常会出现 Bug。但截至 2022 年 5 月，在 ZFS 上的使用应当是没有问题的。
 
 ## 特性
 
-详细的特性列表可以在一篇 [单独的文章](https://wiki.gentoo.org/wiki/ZFS/Features "ZFS/Features") 中找到。
+可以在这篇 [单独的文章](https://wiki.gentoo.org/wiki/ZFS/Features) 中找到详细的特性列表。
 
 ## 安装
 
 ### 模块
 
-来自 [ZFSOnLinux Project](https://zfsonlinux.org/) 的树外 Linux 内核模块可用。
+有来自 [ZFSOnLinux Project](https://zfsonlinux.org/) 的 Linux 树外内核模块可用。
 
 自 0.6.1 版本起，OpenZFS 项目认为 ZFS 已经“准备好在从桌面到超级计算机的一切环境中进行大规模部署”，并且在大规模部署场景下是稳定的。
 
-**注意**
+>**注意**
+>
 对 git 仓库的所有更改都会由 [LLNL](https://www.llnl.gov/) 进行回归测试。
 
 ### USE flags
@@ -94,10 +95,12 @@ ZED_NOTIFY_VERBOSE=1
 
 `rc-update add zfs-zed default`
 
-**注意**
+>**注意**
+>
 对大多数配置来说，只需要前两个。zfs-load-key 用于 ZFS 加密。zfs-share 适用于使用 NFS 共享的用户，而 zfs-zed 用于 ZFS 事件守护进程，负责通过热备盘处理磁盘更换以及通过电子邮件发送故障通知。
 
-**注意**
+>**注意**
+>
 若要将 ZFS 用作根 filesystem，以及使用 ZFS swap，请将 zfs-import 和 zfs-mount 添加到 sysinit 级别，以便在启动或关机过程中访问 filesystem。
 
 ### systemd
@@ -132,10 +135,12 @@ Cryptographic API --->
 
 ### 模块
 
-**注意**
+>**注意**
+>
 每当内核发生变化时，都必须重新构建内核模块。
 
-**注意**
+>**注意**
+>
 在安装内核模块时，必须始终选择稳定版本。你可以在 [这里](https://github.com/openzfs/zfs/releases) 查看最新的稳定版本及其对应的内核版本，同时也应确认 Portage 是否提供了该特定的 [内核版本](https://packages.gentoo.org/packages/sys-kernel/gentoo-sources)。
 
 你还应当在 package.mask 目录中添加一些文件，用于屏蔽特定版本的 zfs-kmod 和 zfs。这可以避免拉取其他版本的这两个包。此外，sys-fs/zfs 的版本也必须与 zfs-kmod 的版本保持一致。
@@ -144,10 +149,12 @@ Cryptographic API --->
 
 #### 自定义 INITRAMFS
 
-**注意**
+>**注意**
+>
 本节不适用于 dracut、ugrd 或 genkernel 用户。
 
-**注意**
+>**注意**
+>
 每次升级到新内核时，都必须在 initramfs 目录中为其创建一个对应的文件夹。
 
 `mkdir -vp /usr/src/initramfs/lib/modules/$(uname -r)`
@@ -168,7 +175,8 @@ Cryptographic API --->
 
 `lddtree --copy-to-tree /usr/src/initramfs /sbin/zvol_wait`
 
-**注意**
+>**注意**
+>
 如果 modules 目录中存在多个内核文件夹，可以在 find 命令中使用 -not -path 来排除特定文件夹。
 
 下面是一个示例，演示为 6.6.2 创建 initramfs，并排除 6.1.118：
@@ -231,10 +239,12 @@ ZFS 存储池（或 zpool）是由一个或多个虚拟设备（vdev）聚合而
 
 #### 准备存储池
 
-**提示**
+>**提示**
+>
 推荐使用物理设备来使用 ZFS。对于“空白”设备，并不需要进行分区，ZFS 会自动进行处理。
 
-**警告**
+>**警告**
+>
 作为后续说明的一种替代方案，如果没有可用的物理设备，也可以使用位于现有 filesystem 之上的文件。这种方式仅适合用于实验，**绝不能在生产系统中使用**。
 
 以下命令会在 /var/lib/zfs_img 中创建四个 2GB 的稀疏镜像文件，用作硬盘。它们最多会占用 8GB 的磁盘空间，但在实际使用中，由于只有写入的区域才会被分配，因此占用空间会很小：
@@ -249,7 +259,8 @@ ZFS 存储池（或 zpool）是由一个或多个虚拟设备（vdev）聚合而
 
 `truncate -s 2G /var/lib/zfs_img/zfs3.img`
 
-**注意**
+>**注意**
+>
 在导出池之后，所有这些文件都会被释放，并且可以删除 /var/lib/zfs_img 目录。
 
 如果使用 ramdisk 更为方便，上述操作的等效方式如下：
@@ -295,7 +306,8 @@ ZFS 存储池（或 zpool）是由一个或多个虚拟设备（vdev）聚合而
 
 请记住：zpool 是在其 vdev 之间进行条带化的，因此哪怕只丢失一个 vdev，也意味着整个 zpool 的丢失。冗余发生在 vdev 层面，而不是 zpool 层面。一旦 zpool 丢失，唯一的选择就是从头重建，并从备份中恢复其内容。仅仅创建 snapshots 并不足以保证在崩溃后的恢复，这些快照还必须被发送到其他地方。后续章节将对此进行进一步说明。
 
-**注意**
+>**注意**
+>
 ZFS 不只是一个简单的 filesystem（按通常被接受的定义），它更像是 filesystem 与卷管理器的混合体。关于这一点的讨论超出了本文范围，只需记住这一事实，并在本文其余部分中继续使用这一常见术语即可。
 
 #### 创建 zpool
@@ -304,7 +316,8 @@ ZFS 不只是一个简单的 filesystem（按通常被接受的定义），它�
 
 `zpool create <poolname> [{striped,mirror,raidz,raidz2,raidz3}] /dev/blockdevice1 /dev/blockdevice2 ... [{striped,mirror,raidz,raidz2,raidz3}] /dev/blockdeviceA /dev/blockdeviceB ... [{striped,mirror,raidz,raidz2,raidz3}] /dev/blockdeviceX /dev/blockdeviceY ...`
 
-**提示**
+>**提示**
+>
 如果未指定 `striped、mirror、raidz、raidz2、raidz3` 中的任何一种，则默认使用 `striped`。
 
 一些示例：
@@ -315,7 +328,8 @@ ZFS 不只是一个简单的 filesystem（按通常被接受的定义），它�
 * `zpool create zfs_test mirror /dev/sda /dev/sdb mirror /dev/sdc /dev/sdd`：创建一个由两个 vdev 组成的“条带化镜像”zpool，每个 vdev 都是由两个物理设备构成的镜像（每个 vdev 中可以损坏一块磁盘而不丢失整个 zpool）
 * `zpool create zfs_test raidz /dev/sda /dev/sdb /dev/sdc`：创建一个包含三个物理设备、采用 RAID-Z1 的单一 vdev 的 zpool（可容忍一块磁盘损坏）
 
-**提示**
+>**提示**
+>
 还有一些其他用于 vdev 类型的关键字，例如 `spare`、`cache`、`slog`、`metadata` 或 `draid`（分布式 RAID）。
 
 如果使用的是文件而不是块设备，只需将块设备路径替换为所使用文件的完整路径即可。例如：
@@ -1135,12 +1149,14 @@ NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE                  DIO LOG-SEC
 * 数据集（datasets）是逻辑数据容器，由 `/usr/sbin/zfs` 命令作为单一实体进行管理。每个数据集在给定 zpool 内具有唯一名称（路径），可以是文件系统（filesystem）、快照（snapshot）、书签（bookmark）或 zvolume。
 * 文件系统（filesystems）是 POSIX 文件系统，可以挂载到系统 VFS 中，并像 ext4 或 XFS 文件系统一样以文件和目录的形式显示。支持扩展形式的 POSIX ACL（NFSv4 ACL）和扩展属性。
 
-**注意**
+>**注意**
+>
 即便文件位于同一 zpool 内，移动文件集之间的文件也是“复制后删除”（cp-then-rm）操作，而非瞬间移动。
 
 * 快照（snapshots）是文件系统或 zvolume 的冻结只读时间点状态。ZFS 是写时复制（copy-on-write）系统，快照只保留自上一次快照以来发生的变化，因此如果没有变化，快照几乎是“免费”的。与 LVM 快照不同，ZFS 快照不需要空间预留，并且数量可以无限。快照可以通过“魔法路径”浏览，查看快照时的文件系统或 zvolume 内容，也可以用于回滚相关文件系统或 zvolume，命名格式为：*zpoolname/datasetname@snapshotname*。
 
-**警告**
+>**警告**
+>
 关于快照的重要事项：
 
 * **务必备份到外部系统！** 如果 zpool 损坏/不可用或数据集被销毁，数据将永久丢失。
@@ -1176,7 +1192,8 @@ mount | grep zpool_test
 zpool_test on /zpool_test type zfs (rw,xattr,noacl)
 ```
 
-**提示**
+>**提示**
+>
 文件系统类型显示为 `zfs`，说明它是一个文件系统数据集。
 
 查看内容：
@@ -1210,7 +1227,8 @@ tree /zpool_test
 zfs list
 ```
 
-**注意**
+>**注意**
+>
 ZFS 会相应地调整挂载点。
 
 更复杂的情况：重命名带有子数据集的文件系统，例如将 `zpool_test/fds2` 改为 `zpool_test/fds3/fds3_1`：
@@ -1220,12 +1238,14 @@ zfs rename zpool_test/fds2 zpool_test/fds3/fds3_1
 zfs list
 ```
 
-**提示**
+>**提示**
+>
 如果想在层级中创建“占位符”（即不包含数据，仅用作定义子数据集的文件系统），先创建完整层级，然后将 `canmount` 属性设置为 `false`。ZFS 会相应调整挂载点，但子数据集名称保持不变，需要单独修改。
 
 与使用 `zfs create` 不同的是，直接使用 `mkdir` 也能创建层级，但每个文件系统数据集是独立的“盒子”，具有独立的属性集合。ZFS 无法压缩、加密或共享单个文件，也不能对单个文件进行快照/回滚，只能针对整个文件系统数据集操作。换句话说，对 `zpool_test/fds1` 的操作（属性更改、快照、回滚等）只影响它本身，而不影响子数据集或其他数据集。*盒子里的内容，只影响盒子内部。*
 
-**提示**
+>**提示**
+>
 运行 `zpool history zpool_test` 可以查看操作历史。当前结构存在但基本为空。属性将在下一节详细讲解。
 
 在写入数据前，可为新的数据集启用压缩，例如创建 `zpool_test/fds4` 并复制大量易压缩数据（如 Linux 内核源码）：
@@ -1272,10 +1292,12 @@ du -sh --apparent-size /zpool_test/fds4
 zfs destroy zpool_test/fds4
 ```
 
-**警告**
+>**警告**
+>
 一旦销毁，数据集无法恢复，请确保有多份备份！
 
-**提示**
+>**提示**
+>
 只有“叶子”数据集可以被销毁。如果数据集有子数据集（如快照或其他文件系统数据集），可以使用递归选项：
 
 ```bash
@@ -1359,7 +1381,8 @@ zfs get all zpool_test
 | xattr       | on|off|sa                                       | 控制是否启用扩展属性。默认 `on` 使用目录级属性，可能带来 I/O 开销；设置为 `sa` 可缓解开销。MDAC 系统如 SELinux 需启用扩展属性，POSIX ACL（Linux）同样需要。NFSv4（FreeBSD）不存储在扩展属性中。                                                                                   |
 | encryption  | on|off|algorithm                                | 控制数据是否加密（`on`）或不加密（`off`）。默认使用 AES-256-GCM，亦可指定算法。zpool 必须启用 `feature@encrypted`，创建数据集时需提供 *keyformat*。加密时，ZFS 会加密数据及部分元数据，但 **不加密 zpool 结构**。可在后续更改密钥（如密钥泄露或其他原因）。详见 *zfs-load-key(8)*。                       |
 
-**提示**
+>**提示**
+>
 如果一个属性会改变存储数据的状态（例如加密、压缩等），则属性值的修改只会影响新添加或被修改的数据。如果属性值的修改不改变存储数据的状态（例如 NFS/SMB 共享、quota 等），则新属性值会立即生效。
 
 首先，在根数据集上启用数据压缩并观察效果：
@@ -1396,7 +1419,8 @@ zpool_test/fds1/fds1_1             compression  off  local
 zpool_test/fds1/fds1_1/fds1_1_1_1  compression  on   inherited from zpool_test/fds1/fds1_1
 ```
 
-**注意**
+>**注意**
+>
 这里出现了两个覆盖。
 
 若要将某个层级及以下的数据集重置为继承属性，可以使用命令：
@@ -1410,7 +1434,8 @@ NAME                    PROPERTY     VALUE           SOURCE
 zpool_test/fds1/fds1_1  compression  on              inherited from zpool_test
 ```
 
-**提示**
+>**提示**
+>
 此时 *SOURCE* 不再是 `local`，而是重新继承自父级。
 
 另一个示例：设置使用配额。为 zpool_test/fds1 和 zpool_test/fds1/fds1_1 设置配额：
@@ -1475,7 +1500,8 @@ NAME                   PROPERTY  VALUE     SOURCE
 zpool_test/share_test  sharenfs  on        local
 ```
 
-**注意**
+>**注意**
+>
 属性 `SOURCE` 显示为 `local`，说明此层级覆盖了默认继承值。
 
 在本机上，可以看到 `/etc/exports.d/zfs.exports` 已被添加了内容：
@@ -1497,7 +1523,8 @@ Export list for 127.0.0.1:
 /zpool_test/share_test *
 ```
 
-**提示**
+>**提示**
+>
 可以传递 NFS 选项而不是仅使用 `on`，例如：
 
 ```bash
@@ -1526,7 +1553,8 @@ NAME                   PROPERTY  VALUE     SOURCE
 zpool_test/share_test  sharesmb  on        local
 ```
 
-**警告**
+>**警告**
+>
 如果执行 `zfs set sharesmb=on` 报错 `SMB share creation failed`，请检查 `/var/lib/samba/usershares` 目录是否存在且权限正确。
 
 定义共享后，ZFS 会在 `/var/lib/samba/usershares` 下添加一个与数据集同名的文件：
@@ -1551,7 +1579,8 @@ guest_ok=n
 sharename=zpool_test_share_test
 ```
 
-**提示**
+>**提示**
+>
 可以通过委派（delegation）让普通用户创建并共享数据集，这是更高级的概念，本节不再深入。
 
 当然，也可以不使用这些属性，通过手动编辑配置文件来定义 NFS 或 Samba 共享。但使用属性方式更方便，管理起来也更简洁。
@@ -1591,7 +1620,8 @@ zpool_test/zvol1                            1.37G  3.54G     74.6K  -
 zpool_test/zvol2                            74.6K  2.17G     74.6K  -
 ```
 
-**注意**
+>**注意**
+>
 `USED` 列显示了实际占用空间。
 
 **重要**
@@ -1723,7 +1753,8 @@ df -h | grep ext4test
 
 创建快照使用 ZFS 命令 `zfs snapshot`，后跟快照名称，遵循格式：`zpool/the/dataset/to/be/snaphotted@snapshotname`。快照名称可以是任意字母数字序列，例如 `mysnap`、`20221214` 或 `test123` 都是有效的。唯一需要遵守的规则是使用 `@` 字符作为数据集名称与快照名称的分隔符。
 
-**警告**
+>**警告**
+>
 只有文件系统数据集和 zvol 可以创建快照。无法对快照或书签进行快照操作。
 
 一旦快照创建完成，无需执行其他操作。ZFS 会在幕后透明地管理差异。只要快照未被销毁，所有变更历史都会被保留，无论是新增、删除还是修改数据。一旦快照被销毁，ZFS 会检查数据集的快照时间线，并释放不再被引用的块。
@@ -1856,7 +1887,8 @@ zpool_test/testfsds1@snap3                            0B      -     4.19G  -
 
 `zfs diff zpool_test/testfsds1@snap2 zpool_test/testfsds1@snap3 | grep -v '^M' | sort`
 
-**提示**
+>**提示**
+>
 非连续的快照也可以进行 *diff*。试试：`zfs diff zpool_test/testfsds1@snap1 zpool_test/testfsds1@snap3` 并观察结果。
 
 现在，删除 `/zpool_test/testfsds1` 下的所有内容，并观察每个快照大小的变化：
@@ -1947,7 +1979,8 @@ zpool_test                                         4.50G   432M      151K  /zpoo
 zpool_test/testfsds1                               4.50G   432M     4.50G  /zpool_test/testfsds1
 ```
 
-**注意**
+>**注意**
+>
 如果存在后续快照，ZFS 会要求显式使用 `-r`，就像前面回滚到第一个快照的示例中一样。
 
 #### 关于 ZFS 快照的重要注意事项
@@ -1962,7 +1995,8 @@ zpool_test/testfsds1                               4.50G   432M     4.50G  /zpoo
 * 完全可以销毁中间快照，而不仅仅是最新的快照：在这种情况下，ZFS 会判断并释放所有剩余快照（以及对应的 filesystem dataset）中不再被引用的数据块。zvolumes 快照亦同理。
 * 一旦快照被销毁，除非通过备份进行 `zfs send/receive`，否则无法恢复该快照。
 
-**警告**
+>**警告**
+>
 在对底层 dataset 使用 `zfs send/receive` 后，不要删除中间快照。ZFS 会检测到接收端存在异常，并会直接拒绝传输。可以在不破坏 `zfs send/receive` 的前提下，在发送端销毁不再使用的快照的方法是：使用书签（bookmarks），将在后文讨论。
 
 #### ZFS 克隆
@@ -2190,7 +2224,8 @@ zpool_test/testfsds1_clone  origin    zpool_test/testfsds1@snap1  -
 
 `zpool scrub zfs_test`
 
-**注意**
+>**注意**
+>
 这可能需要一些时间，并且对 I/O 的压力较大。ZFS 会尽量减小对系统整体的影响，但有时系统即便是最低优先级的 I/O 也无法很好处理。
 
 #### 监控 I/O
@@ -2213,14 +2248,16 @@ ARC 的最小和最大内存使用量可分别通过 `zfs_arc_min` 和 `zfs_arc_
 
 `echo 536870912 >> /sys/module/zfs/parameters/zfs_arc_max`
 
-**注意**
+>**注意**
+>
 此 sysfs 值从 ZFSOnLinux 0.6.2 开始可写。通过 sysfs 设置不会在重启后保留。如果未手动配置，该值在 sysfs 中为 0。当前设置可通过查看 `/proc/spl/kstat/zfs/arcstats` 中的 `c_max` 得知。
 
 第二种是通过 `/etc/modprobe.d/zfs.conf` 设置：
 
 `echo "options zfs zfs_arc_max=536870912" >> /etc/modprobe.d/zfs.conf`
 
-**注意**
+>**注意**
+>
 如果使用 genkernel 加载 ZFS，此值必须在运行 genkernel 之前设置，以确保文件被复制到 initramfs。
 
 第三种是在内核命令行上指定：
@@ -2263,7 +2300,8 @@ sda                  0x50014ee2b3b4d492
 ├─sda3               0x50014ee2b3b4d492
 ```
 
-**注意**
+>**注意**
+>
 WWN 仅适用于 SATA/SAS 硬盘，NVMe 设备使用不同的命名，例如 eui.6479a776500000b8。
 
 /dev/sda3 的完整名称为 `/dev/disks/by-id/wwn-0x50014ee2b3b4d492-part3`。创建名为 rpool 的 ZFS pool：
@@ -2282,7 +2320,9 @@ zpool create -o cachefile=/etc/zfs/zpool.cache \
              -R /mnt/gentoo rpool /dev/disks/by-id/wwn-0x50014ee2b3b4d492-part3
 ```
 
-**注意**
+>**注意**
+>
+>
 各参数的含义可参考 [OpenZFS 文档](https://openzfs.github.io/openzfs-docs/Getting%20Started/Ubuntu/Ubuntu%2022.04%20Root%20on%20ZFS.html#step-2-disk-formatting)。
 
 现在创建 ZFS datasets：
