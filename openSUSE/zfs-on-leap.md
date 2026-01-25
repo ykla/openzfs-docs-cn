@@ -13,7 +13,7 @@
 
 * [64 位 openSUSE Leap Live CD，带 GUI（例如 gnome iso）](https://software.opensuse.org/distributions/leap)
 * [强烈建议使用 64 位内核](https://github.com/zfsonlinux/zfs/wiki/FAQ#32-bit-vs-64-bit-systems)
-* 安装在提供 4 KiB 逻辑扇区（“4Kn”）的驱动器上仅在使用 UEFI 启动时可行。这并非 ZFS 独有的问题。[在 4Kn 磁盘上使用传统（BIOS）启动时，GRUB 不能也不会工作。](http://savannah.gnu.org/bugs/?46700)
+* 在提供 4 KiB 逻辑扇区（“4Kn”）的驱动器上进行的安装仅在使用 UEFI 启动时可行。这并非 ZFS 独有的问题。[在 4Kn 磁盘上使用传统（BIOS）启动时，GRUB 不能也不会工作。](http://savannah.gnu.org/bugs/?46700)
 
 在内存少于 2 GiB 的计算机运行 ZFS 时，将存在严重的性能瓶颈。对于基础工作负载，建议至少使用 4 GiB 内存以获得正常性能。如果你希望使用去重功能，将需要[大量的内存](http://wiki.freebsd.org/ZFSTuningGuide#Deduplication)。启用去重是一项永久性更改，无法轻易还原。
 
@@ -232,7 +232,7 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    * `project_quota` 功能经过测试，安全可用。对启动池而言几乎无实际意义。
    * `resilver_defer` 功能安全，但启动池较小，通常无需使用。
    * `spacemap_v2` 功能经过测试，安全可用。启动池较小，实际影响不大。
-   * 作为只读兼容功能，`userobj_accounting` 理论上兼容，但在实践中 GRUB 可能报 “invalid dnode type” 错误。此功能对 `/boot` 无关紧要。
+   * 作为只读兼容功能，`userobj_accounting` 理论上兼容，但在实践中 GRUB 可能报错“invalid dnode type”。此功能对 `/boot` 无关紧要。
 
 7. 创建根池：
    选择以下方案之一：
@@ -624,7 +624,7 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    zypper install zfs zfs-kmp-default
    ```
 
-   如果系统使用 UEFI 和 Secure Boot，自 openSUSE Leap 15.2 起，内核要求所有内核模块必须签名。`filesystems` 项目中的 ZFS 内核模块已签名，但不是系统首次启动时自动注册的官方 openSUSE 密钥。为了确保系统信任该签名密钥，请安装：
+   如果系统使用 UEFI 和安全启动，自 openSUSE Leap 15.2 起，内核要求所有内核模块必须签名。`filesystems` 项目中的 ZFS 内核模块已签名，但不是系统首次启动时自动注册的官方 openSUSE 密钥。为了确保系统信任该签名密钥，请安装：
 
    ```sh
    zypper install zfs-ueficert
@@ -642,16 +642,19 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    ```
 
    使用 `initramfs` 是为了解决 [cryptsetup 不支持 ZFS](https://bugs.launchpad.net/ubuntu/+source/cryptsetup/+bug/1612906) 的问题。
-   **提示：** 如果创建 mirror 或 raidz 拓扑，为 `luks2` 等磁盘重复添加 `/etc/crypttab` 条目。
 
-9. 仅对 LUKS 安装：修正 ZFS 的 cryptsetup 命名：
+   >**提示：**
+   >
+   >如果创建 mirror 或 raidz 拓扑，为 `luks2` 等磁盘重复添加 `/etc/crypttab` 条目。
+
+10. 仅对 LUKS 安装：修正 ZFS 的 cryptsetup 命名：
 
    ```sh
    echo 'ENV{DM_NAME}!="", SYMLINK+="$env{DM_NAME}"
    ENV{DM_NAME}!="", SYMLINK+="dm-name-$env{DM_NAME}"' >> /etc/udev/rules.d/99-local-crypt.rules
    ```
 
-10. 推荐：生成并设置 hostid：
+11. 推荐：生成并设置 hostid：
 
     ```sh
     cd /root
@@ -669,7 +672,7 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
     hostid
     ```
 
-11. 安装 GRUB：
+12. 安装 GRUB：
     选择一种启动方式：
 
     * 安装 GRUB 用于 legacy（BIOS）启动：
@@ -696,7 +699,7 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
       * 对于 4Kn 驱动器，`-s 1` 是为满足 FAT32 最小簇大小（512 MiB 分区）要求。512 B 扇区的驱动器也可正常使用。
       * 对于 mirror 或 raidz 拓扑，这一步只在第一块磁盘上安装 GRUB，其他磁盘稍后处理。
 
-12. 可选：移除 os-prober：
+13. 可选：移除 os-prober：
 
     ```sh
     zypper remove os-prober
@@ -704,13 +707,14 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
 
     仅在双系统环境中需要 os-prober，否则可避免 update-bootloader 报错。
 
-13. 设置 root 密码：
+14. 设置 root 密码：
 
     ```sh
     passwd
     ```
 
-14. 启用 bpool 导入：
+15. 启用 bpool 导入：
+
     确保 `bpool` 始终被导入，无论 `/etc/zfs/zpool.cache` 是否存在，或 `zfs-import-scan.service` 是否启用。
 
     ```sh
@@ -741,7 +745,8 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
     systemctl enable zfs-import-bpool.service
     ```
 
-15. 可选（但推荐）：将 `/tmp` 挂载为 tmpfs
+17. 可选（但推荐）：将 `/tmp` 挂载为 tmpfs
+
     如果之前创建了 `/tmp` 数据集，则跳过此步，否则可以通过启用 `tmp.mount` 单元将 `/tmp` 放在 tmpfs（内存文件系统）上：
 
     ```sh
@@ -779,7 +784,7 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
 
    >**注意：**
    >
-   >在某些安装中，LUKS 分区可能无法被 dracut 识别，会出现 “Failure occurred during following action: configuring encrypted DM device X VOLUME_CRYPTSETUP_FAILED” 错误。
+   >在某些安装中，LUKS 分区可能无法被 dracut 识别，会出现报错 “Failure occurred during following action: configuring encrypted DM device X VOLUME_CRYPTSETUP_FAILED” 。
    解决方法：检查 cryptsetup 安装情况。[详细信息](https://forums.opensuse.org/showthread.php/528938-installation-with-LUKS-cryptsetup-installer-gives-error-code-3034?p=2850404#post2850404)
    
    >**注意：**
@@ -809,7 +814,7 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
 
    然后返回执行 `grub2-probe` 步骤。
 
-3. 可选（但强烈推荐）：便于调试 GRUB：
+3. 可选（但强烈建议）：便于调试 GRUB：
 
    ```sh
    vi /etc/default/grub
@@ -827,23 +832,31 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    update-bootloader
    ```
 
-   **注意：** 如果出现 `os-prober` 错误可忽略。
-   **注意：** 如果 grub2 安装出现问题，可考虑使用 systemd-boot。
-   **注意：** 如果命令无输出，可使用经典 grub.cfg 生成：
+   >**注意：**
+   >
+   >如果出现 `os-prober` 错误可忽略。
+   
+   >**注意：**
+   >
+   >如果安装 grub2 时出现问题，可考虑使用 systemd-boot。
+   
+   >**注意：**
+   >
+   >如果命令无输出，可使用经典的 `grub.cfg` 生成：
+   >
+   >```sh
+   >grub2-mkconfig -o /boot/grub2/grub.cfg
+   >```
 
-   ```sh
-   grub2-mkconfig -o /boot/grub2/grub.cfg
-   ```
+5. 检查 `/boot/grub2/grub.cfg` 中是否包含 `root=ZFS=rpool/ROOT/suse` 的 `menuentry`，如：
 
-5. 检查 `/boot/grub2/grub.cfg` 中是否包含 `root=ZFS=rpool/ROOT/suse` 的 menuentry，如：
-
-   ```sh
+   ```ini
    linux   /boot@/vmlinuz-5.3.18-150300.59.60-default root=ZFS=rpool/ROOT/suse
    ```
 
    如果没有，修改 `/etc/default/grub`：
 
-   ```sh
+   ```ini
    GRUB_CMDLINE_LINUX="root=ZFS=rpool/ROOT/suse"
    ```
 
@@ -857,10 +870,13 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
       grub2-install $DISK
       ```
 
-      注意，这里是将 GRUB 安装到整个磁盘，而非分区。
+      >**注意**
+      >
+      >这里是将 GRUB 安装到整个磁盘，而非单个分区。
+
       如果创建了 mirror 或 raidz 拓扑，需要对池中每块磁盘重复执行该命令。
 
-   2. 对于 UEFI 启动，将 GRUB 安装到 ESP：
+   3. 对于 UEFI 启动，将 GRUB 安装到 ESP 分区：
 
       ```sh
       grub2-install --target=x86_64-efi --efi-directory=/boot/efi \
@@ -927,6 +943,7 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
 ## 第 9 步：文件系统配置
 
 1. 修复文件系统挂载顺序：
+
    激活 `zfs-mount-generator`，让 systemd 识别各个挂载点，这对 `/var/log`、`/var/tmp` 等目录至关重要。`rsyslog.service` 会依赖 `var-log.mount`，使用 systemd `PrivateTmp` 特性的服务会自动依赖 `var-tmp.mount`。
 
    ```sh
@@ -937,14 +954,14 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    zed -F &
    ```
 
-2. 验证 `zed` 是否更新了缓存，确保以下文件非空：
+3. 验证 `zed` 是否更新了缓存，确保以下文件非空：
 
    ```sh
    cat /etc/zfs/zfs-list.cache/bpool
    cat /etc/zfs/zfs-list.cache/rpool
    ```
 
-3. 如果文件为空，强制更新缓存并重新检查：
+4. 如果文件为空，强制更新缓存并重新检查：
 
    ```sh
    zfs set canmount=on     bpool/BOOT/suse
@@ -953,14 +970,14 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
 
    如果仍为空，先停止 `zed`：
 
-   ```
+   ```sh
    fg
    Ctrl-C
    ```
 
    然后重新启动 `zed` 并重试。
 
-4. 修正缓存路径，去掉 `/mnt` 前缀：
+5. 修正缓存路径，去掉前缀 `/mnt`：
 
    ```sh
    sed -Ei "s|/mnt/?|/|" /etc/zfs/zfs-list.cache/*
@@ -979,7 +996,7 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
 
 2. 可选：对初始安装创建快照：
 
-   ```
+   ```sh
    zfs snapshot -r bpool/BOOT/suse@install
    zfs snapshot -r rpool/ROOT/suse@install
    ```
@@ -1009,18 +1026,19 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    等待新安装的系统正常启动，并以 root 登录。
 
 6. 创建用户账户：
-   将 `username` 替换为你希望的用户名：
+   将 `用户名` 替换为你希望的用户名：
 
    ```sh
-   zfs create rpool/home/username
-   adduser username
+   zfs create rpool/home/用户名
+   adduser 用户名
 
-   cp -a /etc/skel/. /home/username
-   chown -R username:username /home/username
-   usermod -a -G audio,cdrom,dip,floppy,netdev,plugdev,sudo,video username
+   cp -a /etc/skel/. /home/用户名
+   chown -R 用户名:用户名 /home/用户名
+   usermod -a -G audio,cdrom,dip,floppy,netdev,plugdev,sudo,video 用户名
    ```
 
 7. 镜像安装 GRUB（多磁盘安装时）：
+
    如果系统安装在多个磁盘上，需要在其他磁盘上重复安装 GRUB。
 
    * 对于 legacy（BIOS）启动：先确认当前是否为 EFI 模式：
@@ -1070,9 +1088,11 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    ```
 
    你可以根据需求调整大小（这里为 `4G`）。
-   压缩算法使用 `zle`，因为这是最轻量的算法。由于本指南推荐 `ashift=12`（磁盘上 4 KiB 块），4 KiB 页面大小情况下，没有压缩算法能减少 I/O。唯一例外是全零页面，会被 ZFS 丢弃，但必须启用某种压缩才能实现这一行为。
 
-2. 配置 swap 设备：
+   压缩算法使用 `zle`，因为这是开销最小的算法。由于本指南推荐 `ashift=12`（磁盘上 4 KiB 块），4 KiB 页面大小情况下，没有压缩算法能减少 I/O。唯一例外是全零页面，会被 ZFS 丢弃，但必须启用某种压缩才能实现这一行为。
+
+3. 配置 swap 设备：
+
    >**注意**：
    >
    >在配置文件中始终使用完整 `/dev/zvol` 别名，切勿使用短设备名 `/dev/zdX`。
@@ -1083,9 +1103,9 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    echo RESUME=none > /etc/initramfs-tools/conf.d/resume
    ```
 
-   `RESUME=none` 用于禁用休眠恢复。由于 zvol 在启动时尚未导入（池未导入），恢复脚本无法找到 swap，如果不禁用，启动过程会挂起约 30 秒等待 swap zvol 出现。
+   `RESUME=none` 用于禁用休眠恢复。由于 zvol 在启动时尚未导入（池未导入），恢复脚本无法找到 swap，如果不禁用，启动过程会停滞约 30 秒等待 swap zvol 出现。
 
-3. 启用 swap 设备：
+5. 启用 swap 设备：
 
    ```sh
    swapon -av
@@ -1109,6 +1129,7 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    ```
 
 4. 可选（强烈建议）：禁用 root SSH 登录：
+
    如果之前安装过 SSH，请撤销临时修改：
 
    ```sh
@@ -1118,7 +1139,8 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    systemctl restart sshd
    ```
 
-5. 可选：重新启用图形启动过程：
+6. 可选：重新启用图形启动过程：
+
    如果你希望使用图形启动，并且使用了 LUKS，这可以让提示界面更美观。
 
    ```sh
@@ -1130,9 +1152,11 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    sudo update-bootloader
    ```
 
-   **注意**：如果出现 `osprober` 错误，可忽略。
+   >**注意**：
+   >
+   >如果出现 `osprober` 错误，可忽略。
 
-6. 可选：仅针对 LUKS 安装，备份 LUKS 头：
+8. 可选：仅针对 LUKS 安装，备份 LUKS 头：
 
    ```sh
    sudo cryptsetup luksHeaderBackup /dev/disk/by-id/scsi-SATA_disk1-part4 \
@@ -1140,7 +1164,10 @@ LUKS 会加密几乎所有内容。唯一未加密的数据是 bootloader、kern
    ```
 
    将备份妥善保存（如云端存储）。该备份受 LUKS 密码保护，但你也可选择额外加密。
-   **提示**：如果创建了镜像或 raidz 拓扑，请对每个 LUKS 卷重复此操作（如 `luks2` 等）。
+  
+   >**提示**：
+   >
+   >如果创建了镜像或 raidz 拓扑，请对每个 LUKS 卷重复此操作（如 `luks2` 等）。
 
 ## 故障排除
 
@@ -1204,9 +1231,7 @@ update-initramfs -c -k all
 RIP: 0010:[<ffffffff8101b316>]  [<ffffffff8101b316>] native_read_tsc+0x6/0x20
 ```
 
-请升级或降级 Areca 驱动。出现此错误的系统上 ZoL 会不稳定。
-
-
+请升级或降级 Areca 驱动。在出现此错误的系统上 ZoL 将不稳定。
 
 ### MPT2SAS
 
@@ -1221,7 +1246,6 @@ ZFS_INITRD_PRE_MOUNTROOT_SLEEP=X
 ```
 
 系统将在导入池之前等待 X 秒，确保所有磁盘都已出现。
-
 
 
 ### QEMU/KVM/XEN
@@ -1260,7 +1284,7 @@ sudo systemctl restart libvirtd.service
 disk.EnableUUID = "TRUE"
 ```
 
-这样可以确保在客机中创建 `/dev/disk` 别名。
+这样可以确保在客机中创建别名 `/dev/disk`。
 
 
 ### 外部链接
