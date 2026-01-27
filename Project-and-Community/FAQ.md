@@ -206,7 +206,7 @@ $ zpool import -d /dev/disk/by-vdev tank
 $ zpool set cachefile=/etc/zfs/zpool.cache tank
 ```
 
-还也可以通过设置 `cachefile=none` 来禁用缓存文件。这对于故障切换配置非常有用，在这种配置中，应始终由故障切换软件显式导入存储池。
+也还可以通过设置 `cachefile=none` 来禁用缓存文件。这对于故障切换配置非常有用，在这种配置中，应始终由故障切换软件显式导入存储池。
 
 ```sh
 $ zpool set cachefile=none tank
