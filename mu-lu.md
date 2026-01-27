@@ -50,5 +50,7 @@
 ## 项目与社区
 
 * [概述](Project-and-Community.md)
-* [系统管理](Admin-Documentation/index.md)
-  * [OpenZFS 系统管理](Admin-Documentation/System_Administration.md)
+* [系统管理](Project-and-Community/index.md)
+  * [OpenZFS 系统管理](Project-and-Community/System_Administration.md)
+* [捐赠](Project-and-Community/Donate.md)
+* [常见问题解答](Project-and-Community/FAQ.md)
