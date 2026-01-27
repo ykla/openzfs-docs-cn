@@ -77,7 +77,7 @@ vmap allocation for size 4198400 failed: use vmalloc=<size> to increase size.
   * 示例：`zpool create tank mirror A1 B1 mirror A2 B2`
 * **/dev/disk/by-uuid/** 不是个足够理想的方案
   * 概要：可能有人会认为使用 “UUID” 是理想选项——然而实际上，这只会为每个 **pool** ID 列出一个设备，这对于导入包含多块磁盘的池并不十分有用。
-* **/dev/disk/by-partuuid/** / **by-partlabel：** 仅适用于已有分区
+* **/dev/disk/by-partuuid/** / **/dev/disk/by-partlabel/**：仅适用于已有分区
   * 概要：分区 UUID 在创建时方生成，因此使用受限
   * 缺点：对于未分区的磁盘，无法在 `zpool replace`、`add` 或 `attach` 中引用其分区唯一 ID，且如果没有事先记录映射，也无法轻松找到故障磁盘。
 
