@@ -93,7 +93,7 @@ Scrub 与 resilver
 
 VFS 交互
 
-* [FreeBSD VFS 层（Andry Gapon 的博客）](http://www.hybridcluster.com/blog/complexity-freebsd-vfs-using-zfs-example-part-1-2/)（2014-01-14）
+* [FreeBSD VFS 层（Andriy Gapon 的博客）](http://www.hybridcluster.com/blog/complexity-freebsd-vfs-using-zfs-example-part-1-2/)（2014-01-14）
 
 写入节流
 
