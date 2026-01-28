@@ -63,3 +63,8 @@
 * [构建 ZFS](DeveloperResources/BuildingZFS.md)
 * [开发资源](Project-and-Community/Developer_resources.md)
 * [Git 和 GitHub 入门指南（ZoL 版）](Project-and-Community/Git-and-GitHub.md)
+
+## 性能调优
+
+* [硬件](Performance-Tuning/Hardware.md)
+* [模块参数](Performance-Tuning/ModuleParameters.md)
