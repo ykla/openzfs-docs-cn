@@ -75,7 +75,7 @@ ZFS 数据集默认使用 128 KB 的内部 recordsize。数据集 recordsize 是
 
 在启用存储池特性 large_blocks 的情况下，最大支持 16 M 的 recordsize；在支持该特性的系统上，新建存储池默认启用该特性。
 
-在 openZFS v 2.2 之前，默认禁用大于 1 M 的 recordsize，除非设置了 zfs_max_recordsize 内核模块参数以允许使用大于 1 M 的大小。
+在 OpenZFS v 2.2 之前，默认禁用大于 1 M 的 recordsize，除非设置了 zfs_max_recordsize 内核模块参数以允许使用大于 1 M 的大小。
 
 `zfs send` 操作必须指定 `-L`，以确保发送大于 128 KB 的块，并且接收端的存储池必须支持 large_blocks 特性。
 
