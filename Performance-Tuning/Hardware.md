@@ -201,14 +201,14 @@ nvme format /dev/nvme1n1 -l $ID
 
 以下是部分带电源故障保护的 SAS 硬盘列表（非详尽）：
 
-* Samsung PM1633/PM1633a
-* Samsung SM1625
-* Samsung PM853T
-* Toshiba PX05SHB***/PX04SHB***/PX04SHQ***
-* Toshiba PX05SLB***/PX04SLB***/PX04SLQ***
-* Toshiba PX05SMB***/PX04SMB***/PX04SMQ***
-* Toshiba PX05SRB***/PX04SRB***/PX04SRQ***
-* Toshiba PX05SVB***/PX04SVB***/PX04SVQ***
+* `Samsung PM1633/PM1633a`
+* `Samsung SM1625`
+* `Samsung PM853T`
+* `Toshiba PX05SHB***/PX04SHB***/PX04SHQ***`
+* `Toshiba PX05SLB***/PX04SLB***/PX04SLQ***`
+* `Toshiba PX05SMB***/PX04SMB***/PX04SMQ***`
+* `Toshiba PX05SRB***/PX04SRB***/PX04SRQ***`
+* `Toshiba PX05SVB***/PX04SVB***/PX04SVQ***`
 
 #### 带电源故障保护的 SATA 硬盘
 
@@ -282,19 +282,19 @@ PSU 应在电压不再符合额定规格时撤销 `PWR_OK` 信号，从而强制
 
 PSU 保持时间是指在输入电源丢失后，PSU 在标准电压允许范围内继续以最大输出功率供电的时间。这对于支持 UPS 至关重要，因为标准 UPS 从电池供电所需的[转换时间](https://www.sunpower-uk.com/glossary/what-is-transfer-time/)可能让机器断电 5–12 毫秒。Intel 的《ATX 电源设计指南》规定最大连续输出下的保持时间为 17 毫秒。保持时间与 PSU 输出功率成反比，输出功率越低保持时间越长。
 
-PSU 电容老化会降低保持时间，可能导致设备随时间可靠性下降。使用低于规格的 PSU 且保持时间不足的机器，需要高端 UPS 以确保转换时间不超过保持时间。如果在向电池供电转换期间保持时间低于转换时间，而 PWR_OK 信号未被撤销强制关机，可能会导致未定义行为。
+PSU 电容老化会降低保持时间，可能导致设备随时间可靠性下降。使用低于规格的 PSU 且保持时间不足的机器，需要高端 UPS 以确保转换时间不超过保持时间。如果在向电池供电转换期间保持时间低于转换时间，而 PWR_OK 信号未被撤销强制关机，可能会造成未定义行为。
 
 如有疑问，应使用双转换 UPS。双转换 UPS 始终使用电池供电，使转换时间为 0。除非它们是高效混合型 UPS，虽然转换时间低于标准 PSU，但仍会增加延迟。也可以联系 PSU 厂商获取保持时间规格，但若需要多年可靠性，应使用高端 UPS 并确保低转换时间。
 
-注意，除非支持高效模式，否则双转换 UPS 的效率最多为 94%，而高效模式会增加切换到电池供电的延迟。
+注意，如果不支持高效模式，双转换 UPS 的效率最多为 94%，而高效模式会增加切换到电池供电的延迟。
 
 ### UPS 电池
 
-UPS 单位中的铅酸电池通常需要定期更换，以确保在停电时能够供电。对于家庭系统，这通常是每 3 到 5 年一次，但具体周期会随温度变化而不同 [4](https://www.apc.com/us/en/faqs/FA158934/)。对于企业系统，请联系供应商。
+通常，为了确保在停电时能够供电，UPS 设备中的铅酸电池需要定期更换。对于家庭设备，通常是每 3 到 5 年更换一次，但具体周期会随温度变化而不同 [4](https://www.apc.com/us/en/faqs/FA158934/)。对于企业设备，请联系供应商。
 
 脚注
 
-[[1](http://lkcl.net/reports/ssd_analysis.html)] [SSD 电源故障分析报告](http://lkcl.net/reports/ssd_analysis.html)
-[[2](https://www.usenix.org/system/files/conference/fast13/fast13-final80.pdf)] [USENIX FAST 2013 SSD 电源测试论文](https://www.usenix.org/system/files/conference/fast13/fast13-final80.pdf)
-[[3](https://engineering.nordeus.com/power-failure-testing-with-ssds)] [Nordeus SSD 电源故障测试](https://engineering.nordeus.com/power-failure-testing-with-ssds)
-[[4](https://www.apc.com/us/en/faqs/FA158934/)] [APC 关于 UPS 电池更换的常见问题](https://www.apc.com/us/en/faqs/FA158934/)
+- [[1](http://lkcl.net/reports/ssd_analysis.html)] [SSD 电源故障分析报告](http://lkcl.net/reports/ssd_analysis.html)
+- [[2](https://www.usenix.org/system/files/conference/fast13/fast13-final80.pdf)] [USENIX FAST 2013 SSD 电源测试论文](https://www.usenix.org/system/files/conference/fast13/fast13-final80.pdf)
+- [[3](https://engineering.nordeus.com/power-failure-testing-with-ssds)] [Nordeus SSD 电源故障测试](https://engineering.nordeus.com/power-failure-testing-with-ssds)
+- [[4](https://www.apc.com/us/en/faqs/FA158934/)] [APC 关于 UPS 电池更换的常见问题](https://www.apc.com/us/en/faqs/FA158934/)
