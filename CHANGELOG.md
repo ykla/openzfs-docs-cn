@@ -2,6 +2,7 @@
 
 - 2026.3.14
   - 新增“ZFS 消息”
+  - 新增“用户命令（User Commands (1)）”
   - 当前版本 <https://github.com/openzfs/openzfs-docs/commit/259438bd5f12278765eed197237be9d6ab9d5d27>
 - 2026.2.13
   - 新增“OpenZFS 事务延迟”
