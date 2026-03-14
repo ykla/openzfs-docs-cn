@@ -1911,7 +1911,7 @@ count  |         /    |         |
 理想情况下，繁忙池中的脏数据量应保持在函数的斜坡部分，即 **zfs_vdev_async_write_active_min_dirty_percent** 和 **zfs_vdev_async_write_active_max_dirty_percent** 之间。如果超过最大百分比，则表示输入数据速率高于后端存储可处理的速率。在这种情况下，必须进一步限制输入写入速率，如下一节所述。
 
 
-# ZFS 事务延迟
+## ZFS 事务延迟
 
 当我们判断后端存储无法跟上输入写入速率时，会对事务进行延迟。
 
