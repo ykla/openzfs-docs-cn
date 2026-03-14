@@ -699,13 +699,7 @@ ZFS 内部调试日志的最大大小。
 
 ### **zfs_deadman_enabled** = **1** | 0 (int)
 
-启用 Deadman 检测机制。
-
-* 当池同步操作超过 **zfs_deadman_synctime_ms**，或单次 I/O 超过 **zfs_deadman_ziotime_ms**，操作被视为“挂起”。
-* 若启用，Deadman 行为按 **zfs_deadman_failmode** 执行。
-* 默认启用，Failmode 为 **wait**，仅记录挂起 I/O。
-* 当池挂起时，Deadman 自动禁用。
-
+当池同步操作耗时超过 **zfs_deadman_synctime_ms**，或单个 I/O 操作耗时超过 **zfs_deadman_ziotime_ms** 时，该操作被视为“挂起”。如果 **zfs_deadman_enabled** 已启用，则会根据 **zfs_deadman_failmode** 调用 deadman 行为。默认情况下，deadman 已启用且设置为 **wait**，这会导致仅记录“挂起”的 I/O 操作。当池被挂起时，deadman 会自动禁用。
 
 ### **zfs_deadman_events_per_second** = **1**/s (int)
 
