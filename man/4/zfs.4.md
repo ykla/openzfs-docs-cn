@@ -1248,12 +1248,11 @@ spacemap 日志摘要允许的最大行数。
 
 ### **zfs_multihost_fail_intervals** = **10** (uint)
 
-控制检测到多主机写入失败或延迟时池的行为。
+控制在检测到多主机写入失败或延迟时池的行为。
 
-* 若为 **0**，忽略多主机写入失败或延迟，但仍会向 ZED 报告，ZED 可根据配置采取动作，如挂起池或下线设备。
-* 非零时，如果 **zfs_multihost_fail_intervals × zfs_multihost_interval** 毫秒内没有成功的 MMP 写入，池将被挂起。
-  **1** 等效于 **2**，用于避免因正常小幅 I/O 延迟导致池被挂起。
+当 **0** 时，多主机写入失败或延迟将被忽略。失败仍会报告给 ZED，ZED 根据其配置可能会采取操作，例如挂起池或将设备下线。
 
+否则，如果在 **zfs_multihost_fail_intervals × zfs_multihost_interval** 毫秒内没有成功的 MMP 写入，池将被挂起。这保证了在池被导入时活动测试能检测到 MMP 写入。**1** 等同于 **2**；这是为了防止因正常的小幅 I/O 延迟波动而挂起池。
 
 ### **zfs_no_scrub_io** = **0** | 1 (int)
 
